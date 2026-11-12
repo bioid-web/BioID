@@ -1,0 +1,27 @@
+<style>
+  .mermaid { margin: 1.5rem 0; overflow-x: auto; }
+</style>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+  const hosts = [];
+  document.querySelectorAll("pre code.language-mermaid, .language-mermaid code").forEach((code) => {
+    const host = code.closest("pre") || code.closest(".language-mermaid");
+    if (!host || host.dataset.mermaidDone === "1") return;
+    host.dataset.mermaidDone = "1";
+    const el = document.createElement("div");
+    el.className = "mermaid";
+    el.textContent = code.textContent;
+    hosts.push({ host, el });
+  });
+  hosts.forEach(({ host, el }) => host.replaceWith(el));
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "antiscript",
+    theme: "neutral"
+  });
+  if (hosts.length) {
+    await mermaid.run({ nodes: document.querySelectorAll(".mermaid") });
+  }
+</script>

@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/bioid/wallet-registry.schema.json",
+  "title": "bioid wallet registry",
+  "description": "Published list of holding wallets for one ecosystem that adopts the bioid recipe. The recipe repository defines this format and ships a synthetic example only. A real ecosystem publishes its own registry elsewhere and anchors the bytes from its contract metadata (TZIP-16 URI with a sha256 binding) and, preferably, Tezos Domains names that resolve to the same addresses. See docs/wallet-types.md. bioid-wallet-types-2 adds EXTERNAL_USER. A version 1 file that does not use that type still validates.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["notice", "vocabulary", "ecosystem", "wallets"],
+  "properties": {
+    "notice": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable status of this file. The example in the recipe repository says that it is synthetic. A live registry identifies the ecosystem and where the file is published."
+    },
+    "vocabulary": {
+      "type": "string",
+      "pattern": "^bioid-wallet-types-[1-9][0-9]*$",
+      "description": "Wallet-type rulebook this file was written against. bioid-wallet-types-2 is the current docs/wallet-types.md. bioid-wallet-types-1 is the previous five-type vocabulary."
+    },
+    "ecosystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publication": {
+          "type": "string",
+          "description": "Where a reader should fetch the authoritative bytes. The recipe example states that it is not a live registry."
+        }
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How a live registry is anchored. Illustrative in the recipe example. Do not treat a placeholder hash as a commitment.",
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "const": "tzip-16-sha256-uri"
+        },
+        "metadata_key": {
+          "type": "string",
+          "const": "",
+          "description": "TZIP-16 requires a URI at the empty key of big_map %metadata string bytes."
+        },
+        "uri_template": {
+          "type": "string",
+          "description": "sha256://0x<64 hex digits>/<percent-encoded registry URI>, as specified by TZIP-16. The hash is of the published bytes and is not stored inside those bytes."
+        },
+        "tez_domains": {
+          "type": "string",
+          "description": "Names recorded on wallets SHOULD resolve to those wallet addresses once registered. Names in the recipe example are synthetic and are not registered."
+        }
+      }
+    },
+    "wallets": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/wallet" }
+    }
+  },
+  "$defs": {
+    "address": {
+      "type": "string",
+      "pattern": "^tz[123][1-9A-HJ-NP-Za-km-z]{33}$",
+      "description": "Tezos implicit-account shape. The recipe example uses strings that match this shape and fail checksum validation, so they are not accounts."
+    },
+    "wallet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address",
+        "type",
+        "label",
+        "site",
+        "parent_location",
+        "custodian",
+        "active",
+        "metadata_uri"
+      ],
+      "properties": {
+        "address": { "$ref": "#/$defs/address" },
+        "type": {
+          "type": "string",
+          "enum": ["STORAGE", "INTAKE", "PROCESS", "TRANSIT", "QUARANTINE", "EXTERNAL_USER"],
+          "description": "Core vocabulary through bioid-wallet-types-2. EXTERNAL_USER is the approved recipient. Version 1 files use only the first five."
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+        },
+        "site": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Campus or courier operation. Not a postal address and not coordinates."
+        },
+        "parent_location": {
+          "description": "Address of the parent STORAGE wallet for a rack or box. Null for a top-level wallet.",
+          "oneOf": [
+            { "$ref": "#/$defs/address" },
+            { "type": "null" }
+          ]
+        },
+        "custodian": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "address"],
+          "description": "Organisation whose signer keys may act. Not a person, and not the FA2 balance holder. The on-chain field custodian is this address.",
+          "properties": {
+            "label": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+            },
+            "address": { "$ref": "#/$defs/address" }
+          }
+        },
+        "active": { "type": "boolean" },
+        "metadata_uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "tez_domain": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)*\\.tez$",
+          "description": "SHOULD be set (principle 4). A readable Tezos Domains name. In a live registry it SHOULD resolve to address. In the recipe example it is a synthetic placeholder."
+        },
+        "storage_kind": {
+          "type": "string",
+          "enum": ["freezer", "fridge", "ln2_vapor", "ln2_liquid", "bench", "rack", "box", "other"]
+        },
+        "storage_temperature": {
+          "type": "string",
+          "enum": [
+            "RT (Room temperature)",
+            "2 °C to 10°C",
+            "-18 °C to -35 °C",
+            "-60 °C to -85 °C",
+            "<-135 °C",
+            "Liquid nitrogen vapor-phase",
+            "Liquid nitrogen liquid-phase",
+            "Other"
+          ],
+          "description": "MIABIS-SAMPLE-03 allowed values, copied from the public MIABIS sample component. Mapping of storage_kind itself to MIABIS is to be confirmed."
+        },
+        "process": {
+          "type": "string",
+          "enum": ["aliquoted", "split", "rna_isolation", "dna_isolation", "sequencing", "retrieval", "other"]
+        },
+        "process_note": {
+          "type": "string",
+          "description": "Required in practice when process is other. Free text stays off the transition rules."
+        },
+        "expected_max_dwell": {
+          "type": "string",
+          "description": "ISO 8601 duration, day and hour forms. Illustrative in the recipe example. Overrun alerts the monitor; it does not revert the operation.",
+          "anyOf": [
+            { "pattern": "^P\\d+D$" },
+            { "pattern": "^PT\\d+H$" },
+            { "pattern": "^P\\d+DT\\d+H$" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "STORAGE" } },
+            "required": ["type"]
+          },
+          "then": { "required": ["storage_kind"] }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "PROCESS" } },
+            "required": ["type"]
+          },
+          "then": { "required": ["process", "expected_max_dwell"] }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "TRANSIT" } },
+            "required": ["type"]
+          },
+          "then": { "required": ["expected_max_dwell"] }
+        }
+      ]
+    }
+  }
+}

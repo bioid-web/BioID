@@ -1,0 +1,15 @@
+{"event_id": "syn-evt-001", "type": "collected", "tube": "SY00000101", "volume_uL": 3000, "sample_type": "blood", "to_location": "COURIER", "owner": "STUDY-OWNER", "consent_ref": "cref-a1b2c3"}
+{"event_id": "syn-evt-002", "type": "received", "tube": "SY00000101", "from_location": "COURIER", "to_location": "RECEPTION"}
+{"event_id": "syn-evt-003", "type": "to_process", "tube": "SY00000101", "from_location": "RECEPTION", "to_location": "PROC-ALIQ"}
+{"event_id": "syn-evt-004", "type": "aliquoted", "tube": "SY00000101", "from_location": "PROC-ALIQ", "burn_uL": 3000, "children": [{"tube": "SY00000102", "volume_uL": 1000, "sample_type": "aliquot", "to_location": "PROC-ALIQ"}, {"tube": "SY00000103", "volume_uL": 2000, "sample_type": "aliquot", "to_location": "PROC-ALIQ"}]}
+{"event_id": "syn-evt-005", "type": "stored", "tube": "SY00000102", "from_location": "PROC-ALIQ", "to_location": "FRZ-LT80"}
+{"event_id": "syn-evt-006", "type": "split", "tube": "SY00000103", "from_location": "PROC-ALIQ", "burn_uL": 2000, "children": [{"tube": "SY00000104", "volume_uL": 1000, "sample_type": "aliquot", "to_location": "PROC-ALIQ"}, {"tube": "SY00000105", "volume_uL": 1000, "sample_type": "aliquot", "to_location": "PROC-ALIQ"}]}
+{"event_id": "syn-evt-007", "type": "moved", "tube": "SY00000104", "from_location": "PROC-ALIQ", "to_location": "PROC-RNA"}
+{"event_id": "syn-evt-008", "type": "rna_isolation", "tube": "SY00000104", "from_location": "PROC-RNA", "burn_uL": 1000, "children": [{"tube": "SY00000106", "volume_uL": 100, "sample_type": "RNA", "to_location": "FRZ-BIOS"}]}
+{"event_id": "syn-evt-009", "type": "moved", "tube": "SY00000105", "from_location": "PROC-ALIQ", "to_location": "PROC-DNA"}
+{"event_id": "syn-evt-010", "type": "dna_isolation", "tube": "SY00000105", "from_location": "PROC-DNA", "burn_uL": 1000, "children": [{"tube": "SY00000107", "volume_uL": 200, "sample_type": "DNA", "to_location": "PROC-DNA"}]}
+{"event_id": "syn-evt-011", "type": "moved", "tube": "SY00000107", "from_location": "PROC-DNA", "to_location": "PROC-SEQ"}
+{"event_id": "syn-evt-012", "type": "consumed", "tube": "SY00000107", "from_location": "PROC-SEQ", "burn_uL": 50}
+{"event_id": "syn-evt-013", "type": "stored", "tube": "SY00000107", "from_location": "PROC-SEQ", "to_location": "FRZ-LT80"}
+{"event_id": "syn-evt-014", "type": "shipped", "tube": "SY00000107", "from_location": "FRZ-LT80", "to_location": "COURIER"}
+{"event_id": "syn-evt-015", "type": "received", "tube": "SY00000107", "from_location": "COURIER", "to_location": "FRZ-LT80"}

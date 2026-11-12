@@ -1,0 +1,24 @@
+[project]
+name = "bioid-bridge"
+version = "0.1.0"
+description = "Reference LIMS-to-bioid bridge. Synthetic data only. Not a deployment."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+bioid-bridge = "bioid_bridge.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

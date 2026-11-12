@@ -1,0 +1,170 @@
+{
+  "notice": "SYNTHETIC. Invented placeholders for the bioid recipe. Not a real biobank, site, freezer, custodian or account. Addresses match the shape of a tz1 string and fail checksum validation, so they are not accounts. Names under example.tez are not registered. This repository publishes the format and this example only. A real ecosystem publishes its own registry elsewhere and anchors those bytes.",
+  "vocabulary": "bioid-wallet-types-1",
+  "ecosystem": {
+    "id": "syn-ecosystem",
+    "label": "Synthetic example ecosystem",
+    "publication": "Not published as a live registry. Canonical copy of this example: examples/wallet-registry.example.json in the bioid recipe repository."
+  },
+  "anchor": {
+    "mechanism": "tzip-16-sha256-uri",
+    "metadata_key": "",
+    "uri_template": "sha256://0x<64 hex digits of the published bytes>/https:%2F%2Fexample.invalid%2Fsynthetic%2Fwallet-registry.json",
+    "tez_domains": "Synthetic placeholders only, for example bios.example.tez. Not registered, and they do not resolve."
+  },
+  "wallets": [
+    {
+      "address": "tz1SYNRECEPT111111111111111111111111",
+      "type": "INTAKE",
+      "label": "SYN-INTAKE",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-INTAKE",
+      "tez_domain": "intake.example.tez"
+    },
+    {
+      "address": "tz1SYNFREEZER11111111111111111111111",
+      "type": "STORAGE",
+      "label": "SYN-FRZ-LT80",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-FRZ-LT80",
+      "tez_domain": "lt80.example.tez",
+      "storage_kind": "freezer",
+      "storage_temperature": "-60 °C to -85 °C"
+    },
+    {
+      "address": "tz1SYNFRZRACK11111111111111111111111",
+      "type": "STORAGE",
+      "label": "SYN-FRZ-LT80-R3",
+      "site": "syn-lab-a",
+      "parent_location": "tz1SYNFREEZER11111111111111111111111",
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-FRZ-LT80-R3",
+      "tez_domain": "lt80-r3.example.tez",
+      "storage_kind": "rack"
+    },
+    {
+      "address": "tz1SYNFRZBSS111111111111111111111111",
+      "type": "STORAGE",
+      "label": "SYN-FRZ-BIOS",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-FRZ-BIOS",
+      "tez_domain": "bios.example.tez",
+      "storage_kind": "freezer"
+    },
+    {
+      "address": "tz1SYNALQ111111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PROC-ALIQ",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-PROC-ALIQ",
+      "tez_domain": "aliquot.example.tez",
+      "process": "aliquoted",
+      "expected_max_dwell": "PT4H"
+    },
+    {
+      "address": "tz1SYNRNA111111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PROC-RNA",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-PROC-RNA",
+      "tez_domain": "rna.example.tez",
+      "process": "rna_isolation",
+      "expected_max_dwell": "PT8H"
+    },
+    {
+      "address": "tz1SYNDNA111111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PROC-DNA",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-PROC-DNA",
+      "tez_domain": "dna.example.tez",
+      "process": "dna_isolation",
+      "expected_max_dwell": "PT8H"
+    },
+    {
+      "address": "tz1SYNSEQ111111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PROC-SEQ",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-PROC-SEQ",
+      "tez_domain": "seq.example.tez",
+      "process": "sequencing",
+      "expected_max_dwell": "PT24H"
+    },
+    {
+      "address": "tz1SYNPARCEL111111111111111111111111",
+      "type": "TRANSIT",
+      "label": "SYN-TRANSIT-COURIER",
+      "site": "syn-courier",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-courier",
+        "address": "tz1SYNCUSTSEND1111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-TRANSIT-COURIER",
+      "tez_domain": "courier.example.tez",
+      "expected_max_dwell": "P5D"
+    },
+    {
+      "address": "tz1SYNQC1111111111111111111111111111",
+      "type": "QUARANTINE",
+      "label": "SYN-HOLD-QC",
+      "site": "syn-lab-a",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-custodian-lab",
+        "address": "tz1SYNCUSTLAB11111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.invalid/synthetic/wallet-registry.json#SYN-HOLD-QC",
+      "tez_domain": "hold.example.tez"
+    }
+  ]
+}

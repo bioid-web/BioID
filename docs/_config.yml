@@ -1,0 +1,35 @@
+title: BioID
+description: >-
+  One FA2 token per physical tube. Shadownet testnet demo,
+  synthetic data only.
+url: "https://bioid-web.github.io"
+baseurl: "/BioID"
+lang: en
+theme: minima
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: false
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - README.md

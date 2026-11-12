@@ -1,0 +1,22 @@
+Attribution 4.0 International
+
+Copyright 2026 BioID contributors
+
+The documentation in this repository is licensed under the Creative Commons
+Attribution 4.0 International License (CC BY 4.0). That includes the concept
+note, the argumentation, the other pages under docs/, the diagrams, and the
+synthetic examples under examples/.
+
+You are free to share and adapt this material for any purpose, including
+commercial use, provided that you give appropriate credit, provide a link to
+the licence, and indicate if changes were made. You may do so in any
+reasonable manner, but not in any way that suggests the licensor endorses you
+or your use.
+
+- Summary: https://creativecommons.org/licenses/by/4.0/
+- Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Code is licensed separately under the MIT License. See LICENSE.
+
+The synthetic examples are invented illustrations. They are not records of
+real samples, and this licence does not make them so.

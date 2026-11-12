@@ -1,0 +1,28 @@
+{
+  "notice": "SYNTHETIC. Location codes for the public-demo feed. Wallet labels are pilot/wallet-registry.json. Not a vendor export.",
+  "locations": {
+    "RECEPTION": "SYN-PILOT-RECEPTION",
+    "PROC-ALIQ": "SYN-PILOT-ALIQ",
+    "PROC-RNA": "SYN-PILOT-RNA",
+    "PROC-RETRIEVAL": "SYN-PILOT-RETRIEVAL",
+    "FRZ-LT80": "SYN-PILOT-LT80",
+    "FRZ-RACK": "SYN-PILOT-LT80-R1",
+    "COURIER": "SYN-PILOT-COURIER",
+    "EXT-USER": "SYN-PILOT-EXT"
+  },
+  "events": {
+    "collected": {"operation": "MINT", "reason": "collected"},
+    "received": {"operation": "RECEIVE", "reason": "received"},
+    "stored": {"operation": "MOVE", "reason": "stored"},
+    "moved": {"operation": "MOVE", "reason": "moved"},
+    "to_process": {"operation": "MOVE", "reason": "to_process"},
+    "retrieval": {"operation": "MOVE", "reason": "retrieval"},
+    "shipped": {"operation": "SHIP", "reason": "shipped"},
+    "aliquoted": {"operation": "MINT", "reason": "aliquoted"},
+    "rna_isolation": {"operation": "MINT", "reason": "rna_isolation"},
+    "consumed": {"operation": "BURN", "reason": "consumed"},
+    "data_attached": {"operation": "DATA", "reason": "data_attached"},
+    "access_requested": {"operation": "ACCESS_REQUEST", "reason": "access_requested"},
+    "access_approved": {"operation": "ACCESS_APPROVE", "reason": "access_approved"}
+  }
+}

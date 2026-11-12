@@ -1,0 +1,136 @@
+[
+  {
+    "id": 444399,
+    "active": true,
+    "hash": "exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "key": "0",
+    "value": [
+      {
+        "step": "aliquoted",
+        "licence": "CC-BY-4.0",
+        "data_uri": "https://example.org/synthetic/pilot/volume/SY00000201",
+        "data_type": "qc",
+        "access_level": "open",
+        "content_hash": "040ea7042135a5770aed9e53aecc6363c3337635b34612d24cc9152e046b459a"
+      },
+      {
+        "step": "collected",
+        "licence": "CC-BY-4.0",
+        "data_uri": "https://example.org/synthetic/pilot/qc/SY00000201",
+        "data_type": "qc",
+        "access_level": "open",
+        "content_hash": "2a1abf6dfc3ea437013909283d01cfac05448a00cd58d49cfeb6f3dcb6e95397"
+      }
+    ],
+    "firstLevel": 5551958,
+    "lastLevel": 5551975,
+    "updates": 3
+  },
+  {
+    "id": 444407,
+    "active": true,
+    "hash": "expru2dKqDfZG8hu4wNGkiyunvq2hdSKuVYtcKta7BWP6Q18oNxKjS",
+    "key": "1",
+    "value": [],
+    "firstLevel": 5551959,
+    "lastLevel": 5551959,
+    "updates": 1
+  },
+  {
+    "id": 444415,
+    "active": true,
+    "hash": "expruDuAZnFKqmLoisJqUGqrNzXTvw7PJM2rYk97JErM5FHCerQqgn",
+    "key": "2",
+    "value": [],
+    "firstLevel": 5551960,
+    "lastLevel": 5551960,
+    "updates": 1
+  },
+  {
+    "id": 444429,
+    "active": true,
+    "hash": "exprujyHLX2vacVy6AcFmAt5K3Y93aMtccrbNtcsCRik6fjxR8wL6x",
+    "key": "3",
+    "value": [
+      {
+        "step": "stored",
+        "licence": "CC-BY-4.0",
+        "data_uri": "https://example.org/synthetic/pilot/temperature/SY00000211",
+        "data_type": "temperature_log",
+        "access_level": "open",
+        "content_hash": "76a2418f6651221cf53242b83a370f81f6631196d97e3398f59904d7c33fdf03"
+      }
+    ],
+    "firstLevel": 5551975,
+    "lastLevel": 5551978,
+    "updates": 2
+  },
+  {
+    "id": 444430,
+    "active": true,
+    "hash": "exprtkcv5vD1Ct4y91FvZFgXVHCxebKhorSVs8hFmXYgmGsEMo4qdp",
+    "key": "4",
+    "value": [
+      {
+        "step": "rna_isolation",
+        "licence": "CC-BY-4.0",
+        "data_uri": "https://example.org/synthetic/pilot/rin/SY00000241",
+        "data_type": "rin",
+        "access_level": "open",
+        "content_hash": "108ecc216d8af95665ad8263fab59d721279cc702bcbdf6c97507f70be229a2f"
+      }
+    ],
+    "firstLevel": 5551975,
+    "lastLevel": 5551983,
+    "updates": 2
+  },
+  {
+    "id": 444441,
+    "active": true,
+    "hash": "expruhrcC4osJigCeAywh27e6iYerzr5LnhYDwnWJc7VrLg7SxJbtm",
+    "key": "6",
+    "value": [],
+    "firstLevel": 5551976,
+    "lastLevel": 5551976,
+    "updates": 1
+  },
+  {
+    "id": 444442,
+    "active": true,
+    "hash": "exprtqoNj2hRg8PsPMaXLcy3dXjMM3B7nHKrRNqpfjbYpMbULbRj8k",
+    "key": "5",
+    "value": [
+      {
+        "step": "external_use",
+        "licence": "CC-BY-4.0",
+        "data_uri": "https://example.org/doi/10.5555/example.synthetic.pilot-use",
+        "data_type": "analysis",
+        "access_level": "open",
+        "content_hash": "0cf7edb6c8b00149deb5c6e90ac8e42b74f20de2bde5a75e4877ef6923f03b79"
+      }
+    ],
+    "firstLevel": 5551976,
+    "lastLevel": 5551991,
+    "updates": 2
+  },
+  {
+    "id": 444448,
+    "active": true,
+    "hash": "exprufunBN3FAVpZ21WXquoqiNyWB2PvYy1njkP4wHGtMexdKtcJEM",
+    "key": "7",
+    "value": [],
+    "firstLevel": 5551977,
+    "lastLevel": 5551977,
+    "updates": 1
+  },
+  {
+    "id": 444459,
+    "active": true,
+    "hash": "exprtweQBK1emmeg9Q84E7YwE9c8AQrvn88c8SrG2JgjBCYkC1AWx5",
+    "key": "8",
+    "value": [],
+    "firstLevel": 5551983,
+    "lastLevel": 5551983,
+    "updates": 1
+  }
+]

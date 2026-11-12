@@ -1,0 +1,92 @@
+[
+  {
+    "id": 444397,
+    "active": true,
+    "hash": "exprumAvZpamTSQGMetqe6BUPr9ZQkhP8HovdtZgQxpCpKkk7ajecx",
+    "key": "SY00000201",
+    "value": "0",
+    "firstLevel": 5551958,
+    "lastLevel": 5551958,
+    "updates": 1
+  },
+  {
+    "id": 444405,
+    "active": true,
+    "hash": "exprvDwxGAkn8mnXavHuz1zrvsvwbf8oVy1RCBCaBQ7gqy9CbVtQur",
+    "key": "SY00000202",
+    "value": "1",
+    "firstLevel": 5551959,
+    "lastLevel": 5551959,
+    "updates": 1
+  },
+  {
+    "id": 444413,
+    "active": true,
+    "hash": "exprtjrz5PvT98Y7wym3vdS1NcT38qSVCZQqmkJR4Zmr7SzFnCoMGx",
+    "key": "SY00000203",
+    "value": "2",
+    "firstLevel": 5551960,
+    "lastLevel": 5551960,
+    "updates": 1
+  },
+  {
+    "id": 444427,
+    "active": true,
+    "hash": "exprvE4WBPqRG5mCt27CeQfPoN9g21gND8KcC2QLBY6SuTfRDBJXdR",
+    "key": "SY00000212",
+    "value": "4",
+    "firstLevel": 5551975,
+    "lastLevel": 5551975,
+    "updates": 1
+  },
+  {
+    "id": 444428,
+    "active": true,
+    "hash": "exprv4HHzSKhT5WFg1onf7bT8KuadRHHuEJisoUfoTVh173oB5v8GP",
+    "key": "SY00000211",
+    "value": "3",
+    "firstLevel": 5551975,
+    "lastLevel": 5551975,
+    "updates": 1
+  },
+  {
+    "id": 444439,
+    "active": true,
+    "hash": "exprusmMKjVo58zBoe399WmPEvdExCmz5fNvL3fw9YqNeaDX5VRZQE",
+    "key": "SY00000222",
+    "value": "6",
+    "firstLevel": 5551976,
+    "lastLevel": 5551976,
+    "updates": 1
+  },
+  {
+    "id": 444440,
+    "active": true,
+    "hash": "expruQeTPMtNqZiD7vT2zVN1akpg6Aqyi2s3GawfTKCPBLR41t284T",
+    "key": "SY00000221",
+    "value": "5",
+    "firstLevel": 5551976,
+    "lastLevel": 5551976,
+    "updates": 1
+  },
+  {
+    "id": 444447,
+    "active": true,
+    "hash": "exprvG9r4VJXfyVpUQqRetFjQmvEmxDLr2igk88kAV1sE99WmBL6Bu",
+    "key": "SY00000231",
+    "value": "7",
+    "firstLevel": 5551977,
+    "lastLevel": 5551977,
+    "updates": 1
+  },
+  {
+    "id": 444458,
+    "active": true,
+    "hash": "exprvNaCma71xpGpnph45gf7dv34775dXPmnVCT2G9vW3BDTDBMJaG",
+    "key": "SY00000241",
+    "value": "8",
+    "firstLevel": 5551983,
+    "lastLevel": 5551983,
+    "updates": 1
+  }
+]

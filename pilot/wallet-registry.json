@@ -1,0 +1,139 @@
+{
+  "notice": "SYNTHETIC public-demo registry. Invented placeholders. Not a real biobank, site, freezer, custodian or account. Addresses match the shape of a tz1 string and fail checksum validation, so they are not accounts. Names under example.tez are not registered on Tezos Domains. Shadownet has no registrar documented for those names. This file is the readable label list for the pilot.",
+  "vocabulary": "bioid-wallet-types-2",
+  "ecosystem": {
+    "id": "syn-pilot",
+    "label": "Synthetic public demo",
+    "publication": "Not a live registry. Canonical copy: pilot/wallet-registry.json in the bioid recipe repository."
+  },
+  "anchor": {
+    "mechanism": "tzip-16-sha256-uri",
+    "metadata_key": "",
+    "uri_template": "sha256://0x<64 hex digits of the published bytes>/https:%2F%2Fexample.org%2Fsynthetic%2Fpilot%2Fwallet-registry.json",
+    "tez_domains": "Placeholders such as reception.pilot.example.tez. Not registered, and they do not resolve on Shadownet."
+  },
+  "wallets": [
+    {
+      "address": "tz1SYNPRECEPT11111111111111111111111",
+      "type": "INTAKE",
+      "label": "SYN-PILOT-RECEPTION",
+      "site": "syn-pilot-lab",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RECEPTION",
+      "tez_domain": "reception.pilot.example.tez"
+    },
+    {
+      "address": "tz1SYNPALQ11111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-ALIQ",
+      "site": "syn-pilot-lab",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-ALIQ",
+      "tez_domain": "aliquot.pilot.example.tez",
+      "process": "aliquoted",
+      "expected_max_dwell": "PT4H"
+    },
+    {
+      "address": "tz1SYNPRNA11111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-RNA",
+      "site": "syn-pilot-lab",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RNA",
+      "tez_domain": "rna.pilot.example.tez",
+      "process": "rna_isolation",
+      "expected_max_dwell": "PT8H"
+    },
+    {
+      "address": "tz1SYNPGET11111111111111111111111111",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-RETRIEVAL",
+      "site": "syn-pilot-lab",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RETRIEVAL",
+      "tez_domain": "retrieval.pilot.example.tez",
+      "process": "retrieval",
+      "expected_max_dwell": "PT4H"
+    },
+    {
+      "address": "tz1SYNPFRZ11111111111111111111111111",
+      "type": "STORAGE",
+      "label": "SYN-PILOT-LT80",
+      "site": "syn-pilot-lab",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80",
+      "tez_domain": "lt80.pilot.example.tez",
+      "storage_kind": "freezer",
+      "storage_temperature": "-60 °C to -85 °C"
+    },
+    {
+      "address": "tz1SYNPRACK1111111111111111111111111",
+      "type": "STORAGE",
+      "label": "SYN-PILOT-LT80-R1",
+      "site": "syn-pilot-lab",
+      "parent_location": "tz1SYNPFRZ11111111111111111111111111",
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1SYNPLAB11111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80-R1",
+      "tez_domain": "lt80-r1.pilot.example.tez",
+      "storage_kind": "rack"
+    },
+    {
+      "address": "tz1SYNPPARCEL11111111111111111111111",
+      "type": "TRANSIT",
+      "label": "SYN-PILOT-COURIER",
+      "site": "syn-pilot-courier",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-courier",
+        "address": "tz1SYNPSEND1111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-COURIER",
+      "tez_domain": "courier.pilot.example.tez",
+      "expected_max_dwell": "PT48H"
+    },
+    {
+      "address": "tz1SYNPEXT11111111111111111111111111",
+      "type": "EXTERNAL_USER",
+      "label": "SYN-PILOT-EXT",
+      "site": "syn-pilot-guest",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-guest",
+        "address": "tz1SYNPGUEST111111111111111111111111"
+      },
+      "active": true,
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-EXT",
+      "tez_domain": "guest.pilot.example.tez"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "notice": "SYNTHETIC. Invented for the bioid concept note. Not a real sample, person, animal, owner or site.",
+  "root_id": "SY00000101",
+  "owner": "STUDY-OWNER",
+  "consent_ref": "cref-a1b2c3",
+  "unit": "uL",
+  "as_of": "after worked-example step 7b",
+  "tubes": [
+    {
+      "code": "SY00000101",
+      "sample_type": "blood",
+      "created_by": "collected",
+      "parent_id": null,
+      "recorded_volume_uL": 3000,
+      "balance_uL": 0,
+      "note": "Token remains. The 3000 uL taken for SY00000102 and SY00000103 were burned, so the balance is 0. This was not a location change and not a replacement of the token."
+    },
+    {
+      "code": "SY00000102",
+      "sample_type": "aliquot",
+      "created_by": "aliquoted",
+      "parent_id": "SY00000101",
+      "recorded_volume_uL": 1000,
+      "balance_uL": 1000,
+      "wallet": "BB-FRZ-LT80",
+      "status": "active"
+    },
+    {
+      "code": "SY00000103",
+      "sample_type": "aliquot",
+      "created_by": "aliquoted",
+      "parent_id": "SY00000101",
+      "recorded_volume_uL": 2000,
+      "balance_uL": 0,
+      "note": "Token remains. The 2000 uL taken for the split were burned, so the balance is 0."
+    },
+    {
+      "code": "SY00000104",
+      "sample_type": "aliquot",
+      "created_by": "split",
+      "parent_id": "SY00000103",
+      "recorded_volume_uL": 1000,
+      "balance_uL": 0,
+      "note": "Token remains in the process wallet. The 1000 uL taken for RNA isolation were burned, so the balance is 0. SY00000106 is a new token."
+    },
+    {
+      "code": "SY00000105",
+      "sample_type": "aliquot",
+      "created_by": "split",
+      "parent_id": "SY00000103",
+      "recorded_volume_uL": 1000,
+      "balance_uL": 0,
+      "note": "Token remains in the process wallet. The 1000 uL taken for DNA isolation were burned, so the balance is 0. SY00000107 is a new token."
+    },
+    {
+      "code": "SY00000106",
+      "sample_type": "RNA",
+      "created_by": "rna_isolation",
+      "parent_id": "SY00000104",
+      "recorded_volume_uL": 100,
+      "balance_uL": 100,
+      "wallet": "BB-FRZ-bios",
+      "status": "active"
+    },
+    {
+      "code": "SY00000107",
+      "sample_type": "DNA",
+      "created_by": "dna_isolation",
+      "parent_id": "SY00000105",
+      "recorded_volume_uL": 200,
+      "balance_uL": 150,
+      "wallet": "BB-FRZ-LT80",
+      "status": "active",
+      "note": "50 uL consumed for sequencing, then received into long-term storage."
+    }
+  ]
+}

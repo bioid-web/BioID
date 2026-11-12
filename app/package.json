@@ -1,0 +1,10 @@
+{
+  "name": "bioid-viewer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/parse.test.mjs test/labels.test.mjs",
+    "labels": "node scripts/labels.mjs",
+    "smoke": "node test/smoke.mjs"
+  }
+}

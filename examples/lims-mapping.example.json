@@ -1,0 +1,31 @@
+{
+  "notice": "SYNTHETIC. LIMS location codes and event types for the reference bridge. Location codes are invented. Wallet labels are the synthetic registry in examples/wallet-registry.example.json. A real site writes its own file. This file is not a vendor's export format.",
+  "locations": {
+    "RECEPTION": "SYN-INTAKE",
+    "FRZ-LT80": "SYN-FRZ-LT80",
+    "FRZ-BIOS": "SYN-FRZ-BIOS",
+    "PROC-ALIQ": "SYN-PROC-ALIQ",
+    "PROC-RNA": "SYN-PROC-RNA",
+    "PROC-DNA": "SYN-PROC-DNA",
+    "PROC-SEQ": "SYN-PROC-SEQ",
+    "COURIER": "SYN-TRANSIT-COURIER"
+  },
+  "events": {
+    "collected": {"operation": "MINT", "reason": "collected"},
+    "received": {"operation": "RECEIVE", "reason": "received"},
+    "stored": {"operation": "MOVE", "reason": "stored"},
+    "moved": {"operation": "MOVE", "reason": "moved"},
+    "to_process": {"operation": "MOVE", "reason": "to_process"},
+    "shipped": {"operation": "SHIP", "reason": "shipped"},
+    "aliquoted": {"operation": "MINT", "reason": "aliquoted"},
+    "split": {"operation": "MINT", "reason": "split"},
+    "rna_isolation": {"operation": "MINT", "reason": "rna_isolation"},
+    "dna_isolation": {"operation": "MINT", "reason": "dna_isolation"},
+    "consumed": {"operation": "BURN", "reason": "consumed"},
+    "measured": {"operation": "ADJUST", "reason": "measured"},
+    "retrieval": {"operation": "MOVE", "reason": "retrieval"},
+    "data_attached": {"operation": "DATA", "reason": "data_attached"},
+    "access_requested": {"operation": "ACCESS_REQUEST", "reason": "access_requested"},
+    "access_approved": {"operation": "ACCESS_APPROVE", "reason": "access_approved"}
+  }
+}

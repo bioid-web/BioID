@@ -1,0 +1,496 @@
+{
+  "notice": "SYNTHETIC public demo on the Tezos Shadownet TESTNET. Throwaway testnet addresses; no real tubes, people, sites or accounts. Names such as reception.pilot.example.tez are labels only: Tezos Domains has no Shadownet registrar, so they do not resolve. Never reuse these addresses or this file on mainnet.",
+  "network": "shadownet",
+  "chain_id": "NetXsqzbfFenSTS",
+  "rpc": "https://rpc.shadownet.teztnets.com",
+  "explorer": "https://shadownet.tzkt.io",
+  "contract": {
+    "address": "KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix",
+    "tzkt": "https://shadownet.tzkt.io/KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix",
+    "origination": "onssPPtPBAQoPEf9PQxFJmCfmnGPzXA4xgvSSxHHc3fqmyihPEW",
+    "source": "contracts/bioid_fa2.py",
+    "compiler": "smartpy-tezos 0.24.2",
+    "octez_client": "25.2"
+  },
+  "admin": {
+    "label": "syn-pilot-admin",
+    "address": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch"
+  },
+  "owners": {
+    "STUDY-OWNER": "tz1edFeJnyC5Vy3Yje8M1zd1sQKD29WmtDsM"
+  },
+  "custodians": [
+    {
+      "label": "syn-pilot-lab",
+      "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "tzkt": "https://shadownet.tzkt.io/tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+    },
+    {
+      "label": "syn-pilot-courier",
+      "address": "tz1WE11R6Kq5by5EFatjLNbcmWSCmnmyXTVt",
+      "tzkt": "https://shadownet.tzkt.io/tz1WE11R6Kq5by5EFatjLNbcmWSCmnmyXTVt"
+    },
+    {
+      "label": "syn-pilot-guest",
+      "address": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "tzkt": "https://shadownet.tzkt.io/tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr"
+    }
+  ],
+  "wallets": [
+    {
+      "label": "SYN-PILOT-RECEPTION",
+      "address": "tz1P2GdjP5jLPeCLbsMoTibVLBEBViV8PAxM",
+      "type": "INTAKE",
+      "site": "syn-pilot-lab",
+      "process": "",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RECEPTION",
+      "tez_domain_label": "reception.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1P2GdjP5jLPeCLbsMoTibVLBEBViV8PAxM"
+    },
+    {
+      "label": "SYN-PILOT-ALIQ",
+      "address": "tz1PUjA22fzw5PvHgAomCn7wRspZTejb8TrQ",
+      "type": "PROCESS",
+      "site": "syn-pilot-lab",
+      "process": "aliquoted",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-ALIQ",
+      "tez_domain_label": "aliquot.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1PUjA22fzw5PvHgAomCn7wRspZTejb8TrQ"
+    },
+    {
+      "label": "SYN-PILOT-RNA",
+      "address": "tz1X8iBMUk5fqqZTDZxNiCsuahNcU4XuhZmt",
+      "type": "PROCESS",
+      "site": "syn-pilot-lab",
+      "process": "rna_isolation",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RNA",
+      "tez_domain_label": "rna.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1X8iBMUk5fqqZTDZxNiCsuahNcU4XuhZmt"
+    },
+    {
+      "label": "SYN-PILOT-RETRIEVAL",
+      "address": "tz1Q34XARdjTAwgYbW2oUprsXv3hEW2xYZKu",
+      "type": "PROCESS",
+      "site": "syn-pilot-lab",
+      "process": "retrieval",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RETRIEVAL",
+      "tez_domain_label": "retrieval.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1Q34XARdjTAwgYbW2oUprsXv3hEW2xYZKu"
+    },
+    {
+      "label": "SYN-PILOT-LT80",
+      "address": "tz1agcNQ8d4hr6WbC9fr44LB2GFVQmM2ftuP",
+      "type": "STORAGE",
+      "site": "syn-pilot-lab",
+      "process": "",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80",
+      "tez_domain_label": "lt80.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1agcNQ8d4hr6WbC9fr44LB2GFVQmM2ftuP"
+    },
+    {
+      "label": "SYN-PILOT-LT80-R1",
+      "address": "tz1LUbET85n3iDaqSdJHUridP3UDesAk7LtQ",
+      "type": "STORAGE",
+      "site": "syn-pilot-lab",
+      "process": "",
+      "parent_location": "tz1agcNQ8d4hr6WbC9fr44LB2GFVQmM2ftuP",
+      "custodian": {
+        "label": "syn-pilot-lab",
+        "address": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80-R1",
+      "tez_domain_label": "lt80-r1.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1LUbET85n3iDaqSdJHUridP3UDesAk7LtQ"
+    },
+    {
+      "label": "SYN-PILOT-COURIER",
+      "address": "tz1aDbc66yxLfDncBHKrjJ75Ks1arLUyBEjM",
+      "type": "TRANSIT",
+      "site": "syn-pilot-courier",
+      "process": "",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-courier",
+        "address": "tz1WE11R6Kq5by5EFatjLNbcmWSCmnmyXTVt"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-COURIER",
+      "tez_domain_label": "courier.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1aDbc66yxLfDncBHKrjJ75Ks1arLUyBEjM"
+    },
+    {
+      "label": "SYN-PILOT-EXT",
+      "address": "tz1btjx86W3eGocsnVEK1QNDzBjzypBas95E",
+      "type": "EXTERNAL_USER",
+      "site": "syn-pilot-guest",
+      "process": "",
+      "parent_location": null,
+      "custodian": {
+        "label": "syn-pilot-guest",
+        "address": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr"
+      },
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-EXT",
+      "tez_domain_label": "guest.pilot.example.tez",
+      "tzkt": "https://shadownet.tzkt.io/tz1btjx86W3eGocsnVEK1QNDzBjzypBas95E"
+    }
+  ],
+  "operations": [
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-RECEPTION",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "onmjpcMHjt1CstJinkao7MwAnPRKY6dve449LsN65tNyyQdvUFU",
+      "tzkt": "https://shadownet.tzkt.io/onmjpcMHjt1CstJinkao7MwAnPRKY6dve449LsN65tNyyQdvUFU"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-ALIQ",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "opHJgbASEdnVt3zfYj5gYTuY8VbmjJNkbfGzd7yS11vnMrGvthm",
+      "tzkt": "https://shadownet.tzkt.io/opHJgbASEdnVt3zfYj5gYTuY8VbmjJNkbfGzd7yS11vnMrGvthm"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-RNA",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "oovafSPXcg31qkUHACgkuajor7xH2xN6p1rD3x2DXdjN7LRp8JX",
+      "tzkt": "https://shadownet.tzkt.io/oovafSPXcg31qkUHACgkuajor7xH2xN6p1rD3x2DXdjN7LRp8JX"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-RETRIEVAL",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "oo39Ls83vmNC8o12RGHSP1dwEWL1oZ3To17Ho35w1pvUvbubtm8",
+      "tzkt": "https://shadownet.tzkt.io/oo39Ls83vmNC8o12RGHSP1dwEWL1oZ3To17Ho35w1pvUvbubtm8"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-LT80",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "oo768DTfU2rg57dZUtJhhGxejmjtDD64PbvHVuYKuTiHYYUucVr",
+      "tzkt": "https://shadownet.tzkt.io/oo768DTfU2rg57dZUtJhhGxejmjtDD64PbvHVuYKuTiHYYUucVr"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-LT80-R1",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "op3VmseeZda9DKzg4JLps3ie1WvpF1fbxKrAgFXx4nxnfmRUYNE",
+      "tzkt": "https://shadownet.tzkt.io/op3VmseeZda9DKzg4JLps3ie1WvpF1fbxKrAgFXx4nxnfmRUYNE"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-COURIER",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "ooJq8EiiCNeNz1g6oJcvZ3KY8YqQA77HrMG3ZL7uPW5foNBhFDn",
+      "tzkt": "https://shadownet.tzkt.io/ooJq8EiiCNeNz1g6oJcvZ3KY8YqQA77HrMG3ZL7uPW5foNBhFDn"
+    },
+    {
+      "event_id": null,
+      "step": "register SYN-PILOT-EXT",
+      "entrypoint": "register_wallet",
+      "signer": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+      "operation": "oodKxM4WnNmPonjCrcDHifaywrVQStsXAWj9HVoaV2DQ9vjWzhZ",
+      "tzkt": "https://shadownet.tzkt.io/oodKxM4WnNmPonjCrcDHifaywrVQStsXAWj9HVoaV2DQ9vjWzhZ"
+    },
+    {
+      "event_id": "pilot-001",
+      "step": "pilot-001 collected SY00000201",
+      "entrypoint": "mint_primary",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooMioaerapC5bJX3UJM7xM6fQER93S1HQ1zNdJQUMEkgvpLMg6Q",
+      "tzkt": "https://shadownet.tzkt.io/ooMioaerapC5bJX3UJM7xM6fQER93S1HQ1zNdJQUMEkgvpLMg6Q"
+    },
+    {
+      "event_id": "pilot-002",
+      "step": "pilot-002 collected SY00000202",
+      "entrypoint": "mint_primary",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "opZg6Y27grFn6onqJqp68a98Aqdvu8mXEw4DS6NTSKbFwnVxJW2",
+      "tzkt": "https://shadownet.tzkt.io/opZg6Y27grFn6onqJqp68a98Aqdvu8mXEw4DS6NTSKbFwnVxJW2"
+    },
+    {
+      "event_id": "pilot-003",
+      "step": "pilot-003 collected SY00000203",
+      "entrypoint": "mint_primary",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oo32WjZ5xfymg6n6bwdpXQkGdYfiXvQ6unB4TiMcAD4B3YPv9v6",
+      "tzkt": "https://shadownet.tzkt.io/oo32WjZ5xfymg6n6bwdpXQkGdYfiXvQ6unB4TiMcAD4B3YPv9v6"
+    },
+    {
+      "event_id": "pilot-004",
+      "step": "pilot-004 data_attached SY00000201",
+      "entrypoint": "attach_data",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oojnGmZXGYrdgqPoEEwkx8rskWnZDv4Xb9bigugo3gmey9UP5mN",
+      "tzkt": "https://shadownet.tzkt.io/oojnGmZXGYrdgqPoEEwkx8rskWnZDv4Xb9bigugo3gmey9UP5mN"
+    },
+    {
+      "event_id": "pilot-005",
+      "step": "pilot-005 to_process SY00000201",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "onj5SvM6cvaP7FrWtFEjKC5Kg98MFDXHwToHoo7vJg7anWXrVvu",
+      "tzkt": "https://shadownet.tzkt.io/onj5SvM6cvaP7FrWtFEjKC5Kg98MFDXHwToHoo7vJg7anWXrVvu"
+    },
+    {
+      "event_id": "pilot-006",
+      "step": "pilot-006 to_process SY00000202",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oocypz7JEzLQ9HKqZapS4TCSyjroKz5HEtF1xkj7hsbRZcfHJKQ",
+      "tzkt": "https://shadownet.tzkt.io/oocypz7JEzLQ9HKqZapS4TCSyjroKz5HEtF1xkj7hsbRZcfHJKQ"
+    },
+    {
+      "event_id": "pilot-007",
+      "step": "pilot-007 to_process SY00000203",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oohkRzMeJ82sZBGvfBXjKLcGkYYVZ9r7i3egjxxKbVwYso2sBr2",
+      "tzkt": "https://shadownet.tzkt.io/oohkRzMeJ82sZBGvfBXjKLcGkYYVZ9r7i3egjxxKbVwYso2sBr2"
+    },
+    {
+      "event_id": "pilot-008",
+      "step": "pilot-008 aliquoted SY00000201",
+      "entrypoint": "transform",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oouq1kc6BmetJ15HXFZ3PakbeYqyQ1u4kRpNyfj2qR7PYnykBah",
+      "tzkt": "https://shadownet.tzkt.io/oouq1kc6BmetJ15HXFZ3PakbeYqyQ1u4kRpNyfj2qR7PYnykBah"
+    },
+    {
+      "event_id": "pilot-009",
+      "step": "pilot-009 aliquoted SY00000202",
+      "entrypoint": "transform",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooQRd5V9mdLgH3suEgpazdhigtMPbUYvaLja1Uqwu54hq7uyYcN",
+      "tzkt": "https://shadownet.tzkt.io/ooQRd5V9mdLgH3suEgpazdhigtMPbUYvaLja1Uqwu54hq7uyYcN"
+    },
+    {
+      "event_id": "pilot-010",
+      "step": "pilot-010 aliquoted SY00000203",
+      "entrypoint": "transform",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "opXt3JP7Ub5akoExVqGhWbPyH6pCrV5YJpYJ5xHcJkCoaZKv3D6",
+      "tzkt": "https://shadownet.tzkt.io/opXt3JP7Ub5akoExVqGhWbPyH6pCrV5YJpYJ5xHcJkCoaZKv3D6"
+    },
+    {
+      "event_id": "pilot-011",
+      "step": "pilot-011 stored SY00000211",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "opLWebH14jZncoEd6xHuuRCmyxVdTKZNXFb73EiTvqiBuuM3b3W",
+      "tzkt": "https://shadownet.tzkt.io/opLWebH14jZncoEd6xHuuRCmyxVdTKZNXFb73EiTvqiBuuM3b3W"
+    },
+    {
+      "event_id": "pilot-012",
+      "step": "pilot-012 stored SY00000221",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooW242XCf66toJjpfBKeaZaDPrAVDXdTKz1XXajRpV97gsY4UYb",
+      "tzkt": "https://shadownet.tzkt.io/ooW242XCf66toJjpfBKeaZaDPrAVDXdTKz1XXajRpV97gsY4UYb"
+    },
+    {
+      "event_id": "pilot-013",
+      "step": "pilot-013 stored SY00000222",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooQdHJCD1wM6397CnVvEufVxuswYsexsbJa8i3UZZ4YRvGom94n",
+      "tzkt": "https://shadownet.tzkt.io/ooQdHJCD1wM6397CnVvEufVxuswYsexsbJa8i3UZZ4YRvGom94n"
+    },
+    {
+      "event_id": "pilot-014",
+      "step": "pilot-014 stored SY00000231",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "opPbfoFYPpekR87f7eoTLxk3FB96QmrT1ncfP25RGt6TDhqebsS",
+      "tzkt": "https://shadownet.tzkt.io/opPbfoFYPpekR87f7eoTLxk3FB96QmrT1ncfP25RGt6TDhqebsS"
+    },
+    {
+      "event_id": "pilot-015",
+      "step": "pilot-015 moved SY00000212",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooZj2Qwt5GbZnqYuRFGeSQXtodXL1fe4mcmXNrZpJca1DKsF1Qp",
+      "tzkt": "https://shadownet.tzkt.io/ooZj2Qwt5GbZnqYuRFGeSQXtodXL1fe4mcmXNrZpJca1DKsF1Qp"
+    },
+    {
+      "event_id": "pilot-016",
+      "step": "pilot-016 rna_isolation SY00000212",
+      "entrypoint": "transform",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooyJicEDCLznGpQVdx3Gzk1yXCm3EB2PYTukFRdKuFfz2kLAw6d",
+      "tzkt": "https://shadownet.tzkt.io/ooyJicEDCLznGpQVdx3Gzk1yXCm3EB2PYTukFRdKuFfz2kLAw6d"
+    },
+    {
+      "event_id": "pilot-017",
+      "step": "pilot-017 moved SY00000231",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "ooPYG8zRmPcAD9BVVXKeiXsFTKofi1dDUKySWZdc5sny5A2QTB1",
+      "tzkt": "https://shadownet.tzkt.io/ooPYG8zRmPcAD9BVVXKeiXsFTKofi1dDUKySWZdc5sny5A2QTB1"
+    },
+    {
+      "event_id": "pilot-018",
+      "step": "pilot-018 access_requested SY00000221",
+      "entrypoint": "request_access",
+      "signer": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "operation": "oo9Pe11fYckbCzpjzu6CLzbwoXYF2joC2qwY9THoAweEX4KqHMR",
+      "tzkt": "https://shadownet.tzkt.io/oo9Pe11fYckbCzpjzu6CLzbwoXYF2joC2qwY9THoAweEX4KqHMR"
+    },
+    {
+      "event_id": "pilot-019",
+      "step": "pilot-019 access_approved SY00000221",
+      "entrypoint": "approve_access",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "onktbjzNNJMZLBTVqPTUUudBnt1yaUw7sop3m1wCMseBv19JVen",
+      "tzkt": "https://shadownet.tzkt.io/onktbjzNNJMZLBTVqPTUUudBnt1yaUw7sop3m1wCMseBv19JVen"
+    },
+    {
+      "event_id": "pilot-020",
+      "step": "pilot-020 retrieval SY00000221",
+      "entrypoint": "move",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oo9eDJmYKy4wyG2NaC3JkPtDEe41sr7z4enC8bBkFd5tbxvNyGb",
+      "tzkt": "https://shadownet.tzkt.io/oo9eDJmYKy4wyG2NaC3JkPtDEe41sr7z4enC8bBkFd5tbxvNyGb"
+    },
+    {
+      "event_id": "pilot-021",
+      "step": "pilot-021 shipped SY00000221",
+      "entrypoint": "ship",
+      "signer": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "operation": "oo3xn4AgQKpEXZDWFUyLsDyaWPQF5btkEvdiaVRAtQAd4Xq547o",
+      "tzkt": "https://shadownet.tzkt.io/oo3xn4AgQKpEXZDWFUyLsDyaWPQF5btkEvdiaVRAtQAd4Xq547o"
+    },
+    {
+      "event_id": "pilot-022",
+      "step": "pilot-022 received SY00000221",
+      "entrypoint": "receive",
+      "signer": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "operation": "oo5GFVh3GMtFhy5RtKjdsxSSASDRzoVokK2PjA7f9pb38iuVpPa",
+      "tzkt": "https://shadownet.tzkt.io/oo5GFVh3GMtFhy5RtKjdsxSSASDRzoVokK2PjA7f9pb38iuVpPa"
+    },
+    {
+      "event_id": "pilot-023",
+      "step": "pilot-023 consumed SY00000221",
+      "entrypoint": "report_use",
+      "signer": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "operation": "ooy57ERYhkvJBYMMSVLeeCU4TuXWQJ63Ayfe9nbtkeF8yEXbUoq",
+      "tzkt": "https://shadownet.tzkt.io/ooy57ERYhkvJBYMMSVLeeCU4TuXWQJ63Ayfe9nbtkeF8yEXbUoq"
+    },
+    {
+      "event_id": "pilot-024",
+      "step": "pilot-024 data_attached SY00000221",
+      "entrypoint": "attach_data",
+      "signer": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "operation": "opKbfrWmxuDxRwCSJ7RKNg3WcoYoqcSN83zfqwb9pfTEvBpJiw1",
+      "tzkt": "https://shadownet.tzkt.io/opKbfrWmxuDxRwCSJ7RKNg3WcoYoqcSN83zfqwb9pfTEvBpJiw1"
+    }
+  ],
+  "final_state": {
+    "checked": "2026-10-19 via api.shadownet.tzkt.io",
+    "tokens": [
+      {
+        "token_id": 0,
+        "code": "SY00000201",
+        "sample_type": "blood",
+        "balance_uL": 0,
+        "wallet": "SYN-PILOT-ALIQ",
+        "parent_id": null
+      },
+      {
+        "token_id": 1,
+        "code": "SY00000202",
+        "sample_type": "blood",
+        "balance_uL": 0,
+        "wallet": "SYN-PILOT-ALIQ",
+        "parent_id": null
+      },
+      {
+        "token_id": 2,
+        "code": "SY00000203",
+        "sample_type": "blood",
+        "balance_uL": 0,
+        "wallet": "SYN-PILOT-ALIQ",
+        "parent_id": null
+      },
+      {
+        "token_id": 3,
+        "code": "SY00000211",
+        "sample_type": "aliquot",
+        "balance_uL": 1000,
+        "wallet": "SYN-PILOT-LT80",
+        "parent_id": 0
+      },
+      {
+        "token_id": 4,
+        "code": "SY00000212",
+        "sample_type": "aliquot",
+        "balance_uL": 0,
+        "wallet": "SYN-PILOT-RNA",
+        "parent_id": 0
+      },
+      {
+        "token_id": 5,
+        "code": "SY00000221",
+        "sample_type": "aliquot",
+        "balance_uL": 600,
+        "wallet": "SYN-PILOT-EXT",
+        "parent_id": 1
+      },
+      {
+        "token_id": 6,
+        "code": "SY00000222",
+        "sample_type": "aliquot",
+        "balance_uL": 1500,
+        "wallet": "SYN-PILOT-LT80",
+        "parent_id": 1
+      },
+      {
+        "token_id": 7,
+        "code": "SY00000231",
+        "sample_type": "aliquot",
+        "balance_uL": 2000,
+        "wallet": "SYN-PILOT-LT80-R1",
+        "parent_id": 2
+      },
+      {
+        "token_id": 8,
+        "code": "SY00000241",
+        "sample_type": "RNA",
+        "balance_uL": 80,
+        "wallet": "SYN-PILOT-LT80",
+        "parent_id": 4
+      }
+    ]
+  }
+}

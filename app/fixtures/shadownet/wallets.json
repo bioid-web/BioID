@@ -1,0 +1,154 @@
+[
+  {
+    "id": 444384,
+    "active": true,
+    "hash": "exprta9whxtEsXhdUvkHVhZuK5w54o1Ft5Eq5Eitf4w61XRoysUif9",
+    "key": "tz1P2GdjP5jLPeCLbsMoTibVLBEBViV8PAxM",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "INTAKE",
+      "label": "SYN-PILOT-RECEPTION",
+      "active": true,
+      "process": "",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RECEPTION",
+      "parent_location": null
+    },
+    "firstLevel": 5551948,
+    "lastLevel": 5551948,
+    "updates": 1
+  },
+  {
+    "id": 444385,
+    "active": true,
+    "hash": "exprv8KiCs5LCmeCBHpk9DQxuKGfyQ8G1MjEGuFdtTxPTSxvh3LWxm",
+    "key": "tz1PUjA22fzw5PvHgAomCn7wRspZTejb8TrQ",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-ALIQ",
+      "active": true,
+      "process": "aliquoted",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-ALIQ",
+      "parent_location": null
+    },
+    "firstLevel": 5551949,
+    "lastLevel": 5551949,
+    "updates": 1
+  },
+  {
+    "id": 444386,
+    "active": true,
+    "hash": "exprtoqBGJgk7HUWN4b5X48YStDtympMSysxNLf8yWP53fgsNsRWS1",
+    "key": "tz1X8iBMUk5fqqZTDZxNiCsuahNcU4XuhZmt",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-RNA",
+      "active": true,
+      "process": "rna_isolation",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RNA",
+      "parent_location": null
+    },
+    "firstLevel": 5551950,
+    "lastLevel": 5551950,
+    "updates": 1
+  },
+  {
+    "id": 444387,
+    "active": true,
+    "hash": "exprvSRFMh6DcYtE7U29DmVjqPXB6CknumpSi58X31U6CYipvNjDJU",
+    "key": "tz1Q34XARdjTAwgYbW2oUprsXv3hEW2xYZKu",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "PROCESS",
+      "label": "SYN-PILOT-RETRIEVAL",
+      "active": true,
+      "process": "retrieval",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-RETRIEVAL",
+      "parent_location": null
+    },
+    "firstLevel": 5551951,
+    "lastLevel": 5551951,
+    "updates": 1
+  },
+  {
+    "id": 444388,
+    "active": true,
+    "hash": "exprtzM1vJkiZBXAVKrXWWiJQDAqZiLnJ2gXWMLAEd8sGTbdzXKcUV",
+    "key": "tz1agcNQ8d4hr6WbC9fr44LB2GFVQmM2ftuP",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "STORAGE",
+      "label": "SYN-PILOT-LT80",
+      "active": true,
+      "process": "",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80",
+      "parent_location": null
+    },
+    "firstLevel": 5551952,
+    "lastLevel": 5551952,
+    "updates": 1
+  },
+  {
+    "id": 444389,
+    "active": true,
+    "hash": "expruT8xjzFPEtmyDDyH6jvY7o7zns19eBjUxcZeMbb4EZzKTs3xA8",
+    "key": "tz1LUbET85n3iDaqSdJHUridP3UDesAk7LtQ",
+    "value": {
+      "site": "syn-pilot-lab",
+      "type": "STORAGE",
+      "label": "SYN-PILOT-LT80-R1",
+      "active": true,
+      "process": "",
+      "custodian": "tz1Wnwhd9pbHzqGpM2Yp4gwNUSLm8nGL6cyT",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-LT80-R1",
+      "parent_location": "tz1agcNQ8d4hr6WbC9fr44LB2GFVQmM2ftuP"
+    },
+    "firstLevel": 5551953,
+    "lastLevel": 5551953,
+    "updates": 1
+  },
+  {
+    "id": 444390,
+    "active": true,
+    "hash": "expruyiJN6u94bix6AieXKZ6mcKVEcVANT51k8MuRYhyfYCXXKVQhk",
+    "key": "tz1aDbc66yxLfDncBHKrjJ75Ks1arLUyBEjM",
+    "value": {
+      "site": "syn-pilot-courier",
+      "type": "TRANSIT",
+      "label": "SYN-PILOT-COURIER",
+      "active": true,
+      "process": "",
+      "custodian": "tz1WE11R6Kq5by5EFatjLNbcmWSCmnmyXTVt",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-COURIER",
+      "parent_location": null
+    },
+    "firstLevel": 5551954,
+    "lastLevel": 5551954,
+    "updates": 1
+  },
+  {
+    "id": 444391,
+    "active": true,
+    "hash": "exprumwjUJ2CDaAjLyHWPv4wWj2tNcjwYoNrwerTsqMoucCkkzanJM",
+    "key": "tz1btjx86W3eGocsnVEK1QNDzBjzypBas95E",
+    "value": {
+      "site": "syn-pilot-guest",
+      "type": "EXTERNAL_USER",
+      "label": "SYN-PILOT-EXT",
+      "active": true,
+      "process": "",
+      "custodian": "tz1SmhAoMRGva9jchN7uM8EtVaXrFExdyzjr",
+      "metadata_uri": "https://example.org/synthetic/pilot/wallets#SYN-PILOT-EXT",
+      "parent_location": null
+    },
+    "firstLevel": 5551955,
+    "lastLevel": 5551955,
+    "updates": 1
+  }
+]

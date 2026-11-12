@@ -1,0 +1,8 @@
+{
+  "notice": "SYNTHETIC. Invented LIMS inventory after the example event feed. One row is wrong on purpose: SY00000106 is filed under FRZ-LT80 here, while the ledger keeps that RNA tube in SYN-FRZ-BIOS. The other two rows match. Use it to see a mismatch report. Not a real freezer count.",
+  "rows": [
+    {"tube": "SY00000102", "location": "FRZ-LT80", "balance_uL": 1000, "sample_type": "aliquot"},
+    {"tube": "SY00000106", "location": "FRZ-LT80", "balance_uL": 100, "sample_type": "RNA"},
+    {"tube": "SY00000107", "location": "FRZ-LT80", "balance_uL": 150, "sample_type": "DNA"}
+  ]
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BioID tube labels</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <p class="wordmark"><span>BioID</span> labels</p>
+    <p class="banner" role="status">Shadownet testnet demo, synthetic data</p>
+  </header>
+  <main>
+    <form id="label-form" class="card">
+      <h1>Printable Data Matrix labels</h1>
+      <p>Each symbol encodes a link to the viewer, <code>?tube=</code> plus the tube code. Set the base URL to the address where this app is hosted.</p>
+      <label for="base">Base URL</label>
+      <input id="base" name="base" type="url" required>
+      <p class="actions">
+        <button type="submit">Update symbols</button>
+        <button type="button" id="print">Print / PDF</button>
+      </p>
+      <p id="label-status" class="meta"></p>
+      <p class="meta">The same sheet can be written from the command line: <code>node scripts/labels.mjs --base https://example.org/bioid/app/</code></p>
+    </form>
+    <div id="grid" class="label-grid"></div>
+  </main>
+  <footer>
+    <p><a href="index.html">Back to the viewer</a></p>
+    <p>Tips in tez: <a href="https://tzkt.io/tz1Tm5drMq3zueTpSonJ2FE7P3MBZN9RBNta">bioid.tez</a></p>
+  </footer>
+  <script src="vendor/bwip-js-min.js"></script>
+  <script type="module" src="src/labels-page.js"></script>
+</body>
+</html>
