@@ -1,5 +1,9 @@
 # BioID
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24321809.svg)](https://doi.org/10.5281/zenodo.24321809)
+
+White paper v0.3 on Zenodo: [doi.org/10.5281/zenodo.24321809](https://doi.org/10.5281/zenodo.24321809)
+
 Open recipe for tamper-evident biobank sample provenance, custody and access on the Tezos blockchain.
 
 Tips in tez are welcome at [`bioid.tez`](https://tzkt.io/tz1Tm5drMq3zueTpSonJ2FE7P3MBZN9RBNta).
