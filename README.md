@@ -1,4 +1,6 @@
-# bioid.tez
+# BioID
+
+Open recipe for tamper-evident biobank sample provenance, custody and access on the Tezos blockchain.
 
 Tips in tez are welcome at [`bioid.tez`](https://tzkt.io/tz1Tm5drMq3zueTpSonJ2FE7P3MBZN9RBNta).
 
