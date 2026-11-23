@@ -69,7 +69,8 @@ class MockLedger:
               to_wallet TEXT,
               volume_ul INTEGER,
               balance_after INTEGER,
-              related_tube TEXT
+              related_tube TEXT,
+              added_ul INTEGER
             );
             CREATE TABLE IF NOT EXISTS applied_events (
               event_id TEXT PRIMARY KEY,
@@ -95,6 +96,10 @@ class MockLedger:
               data_type TEXT NOT NULL,
               step TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS outcomes (
+              root_id TEXT PRIMARY KEY,
+              outcome TEXT NOT NULL
+            );
             CREATE TABLE IF NOT EXISTS access_requests (
               event_id TEXT PRIMARY KEY,
               tube TEXT NOT NULL,
@@ -105,6 +110,10 @@ class MockLedger:
             );
             """
         )
+        columns = {row[1] for row in self.conn.execute("PRAGMA table_info(history)")}
+        if "added_ul" not in columns:
+            # Ledgers created before v0.4 lack the transform added-volume column.
+            self.conn.execute("ALTER TABLE history ADD COLUMN added_ul INTEGER")
 
     def is_applied(self, event_id: str) -> bool:
         row = self.conn.execute(
@@ -113,7 +122,14 @@ class MockLedger:
         return row is not None
 
     def token(self, tube: str) -> dict | None:
-        row = self.conn.execute("SELECT * FROM tokens WHERE tube = ?", (tube,)).fetchone()
+        row = self.conn.execute(
+            """
+            SELECT t.*, o.outcome AS outcome
+            FROM tokens t LEFT JOIN outcomes o ON o.root_id = t.root_id
+            WHERE t.tube = ?
+            """,
+            (tube,),
+        ).fetchone()
         return dict(row) if row else None
 
     def history(self, tube: str) -> list[dict]:
@@ -228,6 +244,12 @@ class MockLedger:
             self._adjust(op, batch_id, token)
         elif op.op == "attach_data":
             self._attach(op, batch_id, token)
+        elif op.op == "withdraw":
+            self._withdraw(op, batch_id, token)
+        elif op.op == "confirm_destroyed":
+            self._confirm_destroyed(op, batch_id, token)
+        elif op.op == "unfreeze_anonymised":
+            self._unfreeze_anonymised(op, batch_id, token)
         elif op.op == "access_request":
             self._access_request(op, batch_id)
         elif op.op == "access_approve":
@@ -271,8 +293,8 @@ class MockLedger:
             """
             INSERT INTO history(
               event_id, batch_id, tube, op, reason, from_wallet, to_wallet,
-              volume_ul, balance_after, related_tube
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              volume_ul, balance_after, related_tube, added_ul
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 op.event_id,
@@ -285,6 +307,7 @@ class MockLedger:
                 volume_ul,
                 balance_after,
                 related_tube,
+                op.added_uL if op_name == "transform" and tube == op.tube else None,
             ),
         )
 
@@ -397,6 +420,73 @@ class MockLedger:
                 volume_ul=child.volume_uL,
                 balance_after=child.volume_uL,
                 related_tube=op.tube,
+            )
+
+    def _lineage_members(self, root_id: str) -> list[dict]:
+        rows = self.conn.execute(
+            "SELECT * FROM tokens WHERE root_id = ? ORDER BY tube", (root_id,)
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def _withdraw(self, op: Operation, batch_id: str, token: dict | None) -> None:
+        """Freeze the whole lineage of the root tube, wherever each tube sits."""
+        assert token is not None
+        status = "stopped" if op.reason == "stop_use" else "frozen"
+        self.conn.execute(
+            "INSERT INTO outcomes(root_id, outcome) VALUES (?, ?)", (token["root_id"], op.reason)
+        )
+        for member in self._lineage_members(token["root_id"]):
+            self.conn.execute(
+                "UPDATE tokens SET status = ? WHERE tube = ?", (status, member["tube"])
+            )
+            self._history(
+                op,
+                batch_id,
+                tube=member["tube"],
+                op_name="withdraw",
+                from_wallet=member["wallet"],
+                to_wallet=member["wallet"],
+                volume_ul=None,
+                balance_after=member["balance_ul"],
+                related_tube=token["tube"],
+            )
+
+    def _confirm_destroyed(self, op: Operation, batch_id: str, token: dict | None) -> None:
+        """Physical destruction confirmed: burn what is left and close the tube."""
+        assert token is not None
+        self.conn.execute(
+            "UPDATE tokens SET balance_ul = 0, status = 'destroyed' WHERE tube = ?",
+            (op.tube,),
+        )
+        self._history(
+            op,
+            batch_id,
+            tube=op.tube,
+            op_name="confirm_destroyed",
+            from_wallet=token["wallet"],
+            to_wallet=token["wallet"],
+            volume_ul=token["balance_ul"],
+            balance_after=0,
+            related_tube=None,
+        )
+
+    def _unfreeze_anonymised(self, op: Operation, batch_id: str, token: dict | None) -> None:
+        assert token is not None
+        for member in self._lineage_members(token["root_id"]):
+            self.conn.execute(
+                "UPDATE tokens SET status = 'anonymised', consent_ref = NULL WHERE tube = ?",
+                (member["tube"],),
+            )
+            self._history(
+                op,
+                batch_id,
+                tube=member["tube"],
+                op_name="unfreeze_anonymised",
+                from_wallet=member["wallet"],
+                to_wallet=member["wallet"],
+                volume_ul=None,
+                balance_after=member["balance_ul"],
+                related_tube=token["tube"],
             )
 
     def _burn(self, op: Operation, batch_id: str, token: dict | None) -> None:

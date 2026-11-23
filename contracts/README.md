@@ -86,4 +86,4 @@ Origination burns about 8 tez of storage on Shadownet (the code is about 32 KB).
 
 The file name under `bioid_happy/` can differ; the script picks the contract `.tz` it just wrote. Copy the printed `KT1` into `TEZOS_CONTRACT` for the bridge. Do not commit the key, the storage file, or the KT1 if it is tied to a secret.
 
-The bridge `TezosBackend` encodes `mint_primary`, `move`, `ship`, `receive`, `transform`, `consume`, `report_use` (when the source wallet is `EXTERNAL_USER`), `attach_data`, `request_access` and `approve_access`. `submit` then raises `InjectionRefused`. It does not broadcast.
+The bridge `TezosBackend` encodes `mint_primary`, `move`, `ship`, `receive`, `transform`, `consume`, `report_use` (when the source wallet is `EXTERNAL_USER`), `attach_data`, `request_access`, `approve_access`, `withdraw`, `confirm_destroyed` and `unfreeze_anonymised`. `submit` then raises `InjectionRefused`. It does not broadcast.

@@ -3,12 +3,45 @@
 
 import { bigmapPointer } from "./parse.js";
 
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`TzKT answered ${response.status} for ${url}`);
+const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Public indexers and RPC nodes return transient errors (white paper, section 4).
+// Retry network failures, timeouts, 429 and 5xx with exponential backoff. A 404 or
+// other 4xx is a real answer and is not retried. `options` exists so tests can
+// inject fetch and a no-op sleep.
+export async function fetchJson(url, options = {}) {
+  const {
+    retries = 3,
+    timeoutMs = 15000,
+    baseDelayMs = 400,
+    fetchImpl = globalThis.fetch,
+    sleep = delay,
+  } = options;
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetchImpl(url, { signal: controller.signal });
+      if (response.ok) return await response.json();
+      lastError = new Error(`TzKT answered ${response.status} for ${url}`);
+      lastError.status = response.status;
+      if (!RETRYABLE_STATUS.has(response.status)) throw lastError;
+    } catch (error) {
+      if (error === lastError && !RETRYABLE_STATUS.has(error.status)) throw error;
+      lastError = error.name === "AbortError"
+        ? new Error(`TzKT did not answer within ${timeoutMs} ms for ${url}`)
+        : error;
+    } finally {
+      clearTimeout(timer);
+    }
+    if (attempt < retries) await sleep(baseDelayMs * 2 ** attempt);
   }
-  return response.json();
+  throw lastError;
 }
 
 async function collect(url, pageSize = 100) {

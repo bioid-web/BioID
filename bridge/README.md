@@ -88,3 +88,31 @@ The tests cover mapping, rejection of an illegal transform and of a ship out of 
 ## Data
 
 Do not point this bridge at a real LIMS export. The translator will send only the fields it maps, but the safe pattern is still the one in the integration guide: pseudonymous tube codes, location codes, event ids, volumes, and an opaque consent reference. No names, and no table that links a person to that reference.
+
+## Withdrawal, freeze and destruction
+
+The bridge models the contract's withdrawal path, so a replayed feed enforces principle 8 of the [core operating principles](../docs/principles.md).
+
+| LIMS event type (example mapping) | Operation | Effect on the ledger |
+|---|---|---|
+| `withdrawn_destroy`, `withdrawn_anonymise`, `withdrawn_stop_use` | `withdraw` | Signed by the root's `owner`. Freezes every tube in the lineage, in whatever wallet it sits (`stop_use` sets `stopped`). One history row per tube. A second withdrawal on the same root is refused. |
+| `destruction_confirmed` | `confirm_destroyed` | Only after outcome `destroy`. Burns the tube's remaining volume and sets `destroyed`. One call per tube. |
+| `anonymisation_done` | `unfreeze_anonymised` | Only after outcome `anonymise`, signed by the owner. Clears `consent_ref` and reopens the lineage. |
+
+A frozen, stopped or destroyed tube refuses move, ship, receive, transform, burn, adjust and access operations. `attach_data` stays open, as in the contract.
+
+The `owner` that signs a withdrawal is an institutional role (the study or biobank that holds the consent record), never the donor. Donors hold no wallets; a donor's withdrawal reaches the chain through that institution.
+
+## Volume conservation and transformations
+
+Conservation applies to the source material consumed, that is the `burn_uL` taken from the parent, not to the liquid volume of the outputs. A step can never consume more than the parent holds.
+
+| Transformation | Liquid added | Rule for the children |
+|---|---|---|
+| `aliquoted`, `split` | none | Sum of children ≤ `burn_uL`. Sending `added_uL` is refused: a step that adds liquid is a dilution. |
+| `rna_isolation`, `dna_isolation` (extraction, elution) | elution buffer | May exceed `burn_uL`. `added_uL` is optional; when sent, sum of children ≤ `burn_uL + added_uL`. |
+| `dilution`, `titration` | diluent | Must send `added_uL` or `dilution_factor` (final volume / initial volume, so `added_uL = burn_uL × (F − 1)`). Sum of children ≤ `burn_uL + added_uL`. |
+
+The ledger history row of the parent records the transformation type (`reason`), the volume consumed (`volume_ul`) and the added volume (`added_ul`). `adjust` with `evaporation` or `dead_volume` can only lower a volume; only `measured` can raise it.
+
+The deployed Shadownet contract does not yet take `added_ul`. The matching contract change is the tested proposal in [`contracts/proposals/`](../contracts/proposals/README.md); until it is originated on a testnet, `TezosBackend` encodes `transform` for the deployed contract and leaves `added_ul` off-chain.

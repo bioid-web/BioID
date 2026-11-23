@@ -218,6 +218,12 @@ class TezosBackend:
                     "the LIMS request event id for the operator to substitute."
                 ),
             }
+        if op.op == "withdraw":
+            return "withdraw", {"code": op.tube, "outcome": op.reason}
+        if op.op == "confirm_destroyed":
+            return "confirm_destroyed", {"code": op.tube}
+        if op.op == "unfreeze_anonymised":
+            return "unfreeze_anonymised", {"code": op.tube}
         raise ConfigError(f"no contract entrypoint for {op.op}")
 
     def _source_type(self, op: Operation) -> str:

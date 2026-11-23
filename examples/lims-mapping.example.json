@@ -21,11 +21,18 @@
     "split": {"operation": "MINT", "reason": "split"},
     "rna_isolation": {"operation": "MINT", "reason": "rna_isolation"},
     "dna_isolation": {"operation": "MINT", "reason": "dna_isolation"},
+    "dilution": {"operation": "MINT", "reason": "dilution"},
+    "titration": {"operation": "MINT", "reason": "titration"},
     "consumed": {"operation": "BURN", "reason": "consumed"},
     "measured": {"operation": "ADJUST", "reason": "measured"},
     "retrieval": {"operation": "MOVE", "reason": "retrieval"},
     "data_attached": {"operation": "DATA", "reason": "data_attached"},
     "access_requested": {"operation": "ACCESS_REQUEST", "reason": "access_requested"},
-    "access_approved": {"operation": "ACCESS_APPROVE", "reason": "access_approved"}
+    "access_approved": {"operation": "ACCESS_APPROVE", "reason": "access_approved"},
+    "withdrawn_destroy": {"operation": "WITHDRAW", "reason": "destroy"},
+    "withdrawn_anonymise": {"operation": "WITHDRAW", "reason": "anonymise"},
+    "withdrawn_stop_use": {"operation": "WITHDRAW", "reason": "stop_use"},
+    "destruction_confirmed": {"operation": "CONFIRM_DESTROYED", "reason": "withdrawn-destroyed"},
+    "anonymisation_done": {"operation": "UNFREEZE_ANONYMISED", "reason": "anonymised"}
   }
 }

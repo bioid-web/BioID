@@ -18,6 +18,9 @@ _PUBLIC_OPS = {
     "DATA": "attach_data",
     "ACCESS_REQUEST": "access_request",
     "ACCESS_APPROVE": "access_approve",
+    "WITHDRAW": "withdraw",
+    "CONFIRM_DESTROYED": "confirm_destroyed",
+    "UNFREEZE_ANONYMISED": "unfreeze_anonymised",
 }
 
 
@@ -142,6 +145,7 @@ def translate(event: dict, mapping: Mapping) -> Operation:
 
     volume = event.get("volume_uL")
     burn = event.get("burn_uL")
+    added, factor = _added_volume(event, event_id, burn)
     sample_type = event.get("sample_type")
     owner = event.get("owner")
     consent_ref = event.get("consent_ref")
@@ -156,6 +160,8 @@ def translate(event: dict, mapping: Mapping) -> Operation:
         tube=tube,
         volume_uL=None if volume is None else _as_int(volume, "volume_uL"),
         burn_uL=None if burn is None else _as_int(burn, "burn_uL"),
+        added_uL=added,
+        dilution_factor=factor,
         to_wallet=to_wallet,
         from_wallet=from_wallet,
         sample_type=sample_type if isinstance(sample_type, str) else None,
@@ -168,6 +174,36 @@ def translate(event: dict, mapping: Mapping) -> Operation:
         duo_codes=duo_codes if isinstance(duo_codes, str) else None,
         request_event_id=request_event_id if isinstance(request_event_id, str) else None,
     )
+
+
+def _added_volume(event: dict, event_id: str, burn: object) -> tuple[int | None, float | None]:
+    """Liquid added by a transform: `added_uL`, or `dilution_factor` (final / initial).
+
+    A factor F on a burn B adds B * (F - 1) µL, rounded to whole microlitres. When both
+    are sent they must agree to within 1 µL.
+    """
+    raw_added = event.get("added_uL")
+    raw_factor = event.get("dilution_factor")
+    added = None if raw_added is None else _as_int(raw_added, "added_uL")
+    if added is not None and added <= 0:
+        raise MappingError(f"{event_id} added_uL must be a positive integer")
+    factor = None
+    if raw_factor is not None:
+        if isinstance(raw_factor, bool) or not isinstance(raw_factor, (int, float)):
+            raise MappingError(f"{event_id} dilution_factor must be a number")
+        factor = float(raw_factor)
+        if factor <= 1:
+            raise MappingError(f"{event_id} dilution_factor must be greater than 1")
+        if not isinstance(burn, int) or isinstance(burn, bool):
+            raise MappingError(f"{event_id} dilution_factor needs burn_uL")
+        derived = round(burn * (factor - 1))
+        if added is not None and abs(added - derived) > 1:
+            raise MappingError(
+                f"{event_id} added_uL {added} disagrees with dilution_factor {factor}"
+            )
+        if added is None:
+            added = derived
+    return added, factor
 
 
 def _data_ref(event: dict, event_id: str) -> DataRef | None:
