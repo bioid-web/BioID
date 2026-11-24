@@ -44,6 +44,7 @@ Work from the v0.4 improvement sprint, 23–24 November 2026. Every sample, tube
 
 - White paper v0.4 draft (`docs/whitepaper/BioID-whitepaper-v0.4-draft.md`). The repository recipe is now the primary design, and the lean21 mainnet trial is reported as history, with its results kept.
 - New: related work (`docs/related-work.md`), threat model (`docs/threat-model.md`), durability and pinning plan (`docs/durability.md`).
+- New design, not implemented and needing no contract change: keeping metadata hidden (white paper §3.11, threat T18, durability keys section). SHA-256 is a hash, not encryption. Off-chain metadata is encrypted with AES-256-GCM envelope encryption, data keys are wrapped per recipient under each data-sharing agreement, only the SHA-256 of the ciphertext goes on-chain, and destroying the keys on withdrawal works as crypto-shredding. The limits are stated: copies already decrypted, and future cryptanalysis.
 - Updated: contract, proposals, bridge, viewer and index pages.
 
 ### External review

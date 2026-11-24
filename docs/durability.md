@@ -18,6 +18,15 @@ Version 0.4, 24 November 2026. **This is a plan, not a running service.** It say
 | Viewer, bridge and contract source | This repository | Lets anyone re-read the record later | GitHub, plus an archive of the repository in Software Heritage ([how to archive](https://www.softwareheritage.org/how-to-archive-reference-code/)), plus versioned releases deposited with a DOI. |
 | The off-chain link from tube to donor | The biobank's own systems | Needed to act on a withdrawal | Normal institutional safeguards. **Deliberately not durable beyond its legal purpose:** deleting it is how anonymisation works. |
 
+## Encryption keys for hidden metadata (design)
+
+If metadata is kept hidden with envelope encryption (white paper §3.11), the keys become part of what must survive, and also part of what must be destroyable.
+
+- **Data keys** (one AES-256-GCM key per object) are kept only in wrapped form: one copy per recipient named in a data-sharing agreement, plus one for the institution's key service. Plain data keys are never stored.
+- **Durability.** The institution's wrapped copy is backed up with the same care as the document. Losing every copy of a data key makes that object unreadable for good, even though its ciphertext and its on-chain hash survive.
+- **Destruction.** On a withdrawal that requires it, every wrapped copy is destroyed and the destruction is logged in the key service (crypto-shredding). The ciphertext may stay pinned. The on-chain hash still shows that the object existed and was not changed.
+- **Limits.** Copies a partner has already decrypted are outside the institution's control. Ciphertext kept for decades may be weakened by future cryptanalysis. Data that must stay secret that long, such as DNA sequence, is kept in institutional storage, not pinned on public IPFS.
+
 ## Chain-data exports
 
 The chain is the source of truth, but readers today depend on indexers (TzKT) and RPC nodes run by third parties. Two measures reduce that dependence.

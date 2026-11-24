@@ -140,6 +140,19 @@ The chain proves that a record was made, by which key, when, and in what order. 
 
 A record that is meant to outlast its institution needs more than the chain. The repository's durability plan (`docs/durability.md`) assigns each part a keeper. Contract and token metadata are pinned on at least two independent pinning services and on one institutional IPFS node. Each quarter, contract storage, all big-map keys and all events are exported with checksums and deposited in a long-term repository, so history can be checked even if today's indexers disappear. The source code is archived in Software Heritage and released with a DOI. Salts are kept as durably as the documents they protect. The off-chain link from tube to donor is deliberately not durable beyond its legal purpose, because deleting it is how anonymisation works. The plan also sets a schedule for re-verifying the record against the chain. It is a plan, not yet a running service.
 
+### 3.11 Keeping metadata hidden (design, not implemented)
+
+A fingerprint is not a lock. SHA-256 is a hash: it proves that a document has not changed, but anyone who holds the document can read it, and a short or predictable document can be guessed from its hash (Section 3.7). Metadata that partners need but the public should not see therefore has to be encrypted before it is stored anywhere public, including IPFS.
+
+The proposed design uses envelope encryption and needs no contract change.
+
+- **Encrypt each metadata object** with its own random 256-bit data key, using AES-256-GCM with a fresh nonce. GCM also detects any change to the ciphertext.
+- **Share the data key per agreement.** The data key is wrapped (encrypted) separately for each recipient named in a data-sharing agreement, with that recipient's public key or through the institution's key service. The wrapped keys are stored off-chain next to the ciphertext. A new partner gets a newly wrapped copy. A partner whose agreement ends gets nothing for new versions, which use new data keys.
+- **Anchor only the ciphertext.** The encrypted object goes to IPFS or institutional storage. On-chain, `attach_data` records the URI and the SHA-256 hash of the ciphertext, so anyone can check that the stored object is unchanged without being able to read it. Public token metadata stays minimal, for example the tube code and type, and points to the encrypted object.
+- **Crypto-shredding on withdrawal.** When a withdrawal requires it, the institution destroys the data keys and every wrapped copy of them. The ciphertext can stay pinned, so the public record stays intact, but nobody can decrypt it any more.
+
+Crypto-shredding has limits. It cannot recall copies that a partner has already decrypted and saved, so agreements must require partners to delete decrypted copies and to confirm that they have. It also relies on AES-256 staying unbroken. Ciphertext pinned on a public network may be kept for decades, and future cryptanalysis, including large quantum computers, could weaken today's encryption. Data that must stay secret for a very long time, such as DNA sequence, should therefore not be put on public networks even when encrypted. Keep it in institutional storage, with only the hash anchored. Key destruction also has to be shown, for example through key-service logs, because the chain cannot prove that a key no longer exists.
+
 ## 4. Mainnet trial, November 2026 (history; implemented)
 
 The contract is KT1DgrZrWrdTjf7sENXVctihhpDHfU4RTpdy on Tezos mainnet (https://tzkt.io/KT1DgrZrWrdTjf7sENXVctihhpDHfU4RTpdy). Contract metadata is at ipfs://bafkreidy445g56sdex2papffyfcjo4v57ihjsimljwaojbihih2e7poyka and the token metadata index at ipfs://bafkreifkmvtna6yk4atwhdssiuv5zugjlsrlj26qop2ajr6ly5vxinybwa. In the scenario used for this proof-of-concept run, 21 synthetic field tubes were registered. 11 went intact to biobank storage. 10 were split equally into a sister tube for the biobank and a DNA daughter, which went through a DNA instrument. 9 DNA daughters produced extracts moved to a -20C freezer, and one was consumed without an extract. Two synthetic volunteer wallets withdrew consent.
@@ -219,7 +232,7 @@ A fuller survey, with a positioning table and checked links, is in the repositor
 **Future work (not implemented).**
 
 - **Testnet origination of the v0.4 proposal.** A dry run on Shadownet (simulated, not sent) measured the origination at 32,612 bytes including the signature, 156 bytes under the 32,768-byte limit. Further features will need space to be freed first, which is planned for a later upgrade.
-- **Encrypted, versioned data files.** Large result files, including DNA data, would be stored encrypted off-chain on IPFS or institutional storage. Only references, fingerprints and version numbers would go on-chain, so the chain proves that a given version existed without exposing it. Storage would be chosen for cost, durability and jurisdiction, not limited by blockchain size.
+- **Encrypted, versioned data files.** Large result files and hidden metadata would be stored encrypted off-chain with the envelope design in Section 3.11. DNA data stays in institutional storage. Only references, fingerprints of the ciphertext and version numbers would go on-chain, so the chain proves that a given version existed without exposing it. Storage would be chosen for cost, durability and jurisdiction, not limited by blockchain size.
 - **Key management.** This means implementing the custodian and admin key model in Section 3.4 in a signing service, including rotation, freezing and staff turnover, and setting up the owner multisig.
 - **Running the durability plan.** Assign the pinning, export and verification roles in Section 3.10 to named teams, and run the first quarterly export.
 - **Requester identity.** Link access requests to a Verifiable Credential or Passport visa (Section 5a).
@@ -254,7 +267,7 @@ BioID is offered as a concrete, inspectable starting point for that conversation
 - New: typed wallets, ship and receive, and the LIMS bridge (Section 3.2).
 - New: volume rules by transformation type (Section 3.2a).
 - New: constant-cost withdrawal, stop-use escalation, a multisig owner, and custodian-only confirmation of destruction (Sections 3.3 and 3.6).
-- New: salted fingerprints (Section 3.7); the phone viewer with per-tube reads (Section 3.8); the threat model (Section 3.9); the durability plan (Section 3.10).
+- New: salted fingerprints (Section 3.7); the phone viewer with per-tube reads (Section 3.8); the threat model (Section 3.9); the durability plan (Section 3.10); a design for keeping metadata hidden with envelope encryption and crypto-shredding (Section 3.11).
 - New: a comparison with de-bi (Section 5); expanded related work (Section 5a); a split between what is implemented and what is future work (Section 7).
 - The repository's CHANGELOG lists the code changes.
 

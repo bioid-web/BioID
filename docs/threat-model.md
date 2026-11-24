@@ -43,6 +43,7 @@ Custodians at stations and sites, couriers, external users with approved access,
 | T15 | The chain stops, or changes in a way that breaks the record | Tezos was chosen for continuity. Exports of storage and events are archived with checksums, so history can be checked without the live chain. | planned | Residual risk is inherent in any single chain. |
 | T16 | Someone mistakes tokens for tradable assets | FA2 `transfer` is disabled. Custody moves only through typed entrypoints. No payment token. | implemented | Communication. |
 | T17 | A requester's wallet is not the institution it claims to be | Access needs custodian or admin approval, and the agreement is fingerprinted | implemented | Planned: fingerprint a GA4GH Passport visa or a W3C Verifiable Credential in the request ([related work](related-work.md) §5). |
+| T18 | Off-chain metadata or results on IPFS are read by people outside the data-sharing agreement (a SHA-256 fingerprint is a hash, not encryption) | Design: AES-256-GCM envelope encryption. Each object has its own data key, wrapped for each recipient named in the agreement. Only the SHA-256 of the ciphertext is anchored with `attach_data`. On withdrawal, all copies of the keys are destroyed (crypto-shredding). No contract change. | design (white paper §3.11) | Copies a partner has already decrypted cannot be recalled. Future cryptanalysis (including quantum) may weaken pinned ciphertext, so DNA data stays off public networks. Key destruction must be proven off-chain. |
 
 ## Out of scope
 
