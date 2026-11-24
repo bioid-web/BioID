@@ -128,12 +128,12 @@ The viewer brands itself "bioid lean trial". Some trial tube codes are omitted f
 
 ### 3.9 Threat model
 
-The chain proves that a record was made, by which key, when, and in what order. It does not prove that a tube is in a freezer. BioID's guarantees and limits follow from that. The full threat model, with seventeen threats, the mitigation for each, its status and what risk remains, is in the repository (`docs/threat-model.md`). In summary:
+The chain proves that a record was made, by which key, when, and in what order. It does not prove that a tube is in a freezer. BioID's guarantees and limits follow from that. The full threat model, with eighteen threats, the mitigation for each, its status and what risk remains, is in the repository (`docs/threat-model.md`). In summary:
 
 - **What the chain protects against.** Silent editing or deletion of history after the fact; back-dating; one party quietly rewriting a shared record; loss of the record when an institution's systems fail or close; volume appearing from nowhere through transformation records (Section 3.2a); a withdrawal that misses a derived tube or cannot be afforded for a large lineage (Section 3.6).
 - **What it does not protect against.** A custodian who records an event that did not happen, or omits one that did (garbage in, permanent garbage); a stolen or misused key until it is replaced; collusion between the parties that order and attest; mislabelled tubes at the bench; loss of every owner key, which cannot be recovered on-chain by design.
 - **Mitigations.** Typed wallets with enforced transitions; two-step ship and receive, so the receiving site confirms each hand-over; separation of the key that orders destruction from the key that attests it; reconciliation of the chain against LIMS exports; physical audits sampled against the public record; key custody in HSMs or key services; a multisig for the owner role.
-- **Privacy threats.** Linkage through timing, wallet reuse and activity patterns (Section 7); guessing the content behind a bare fingerprint of a short or predictable document, which salted fingerprints address (Section 3.7).
+- **Privacy threats.** Linkage through timing, wallet reuse and activity patterns (Section 7); guessing the content behind a bare fingerprint of a short or predictable document, which salted fingerprints address (Section 3.7); reading of off-chain metadata by people outside an agreement, which envelope encryption addresses (Section 3.11).
 - **Infrastructure threats.** Indexer or RPC outages and wrong answers (the viewer retries, and verification scripts should compare two sources); loss of IPFS pins; long-term chain continuity (Section 3.10).
 
 ### 3.10 Durability (plan)
