@@ -1,0 +1,200 @@
+--- a/contracts/bioid_fa2.py
++++ b/contracts/bioid_fa2.py
+@@ -544,7 +544,7 @@
+             )
+ 
+         @sp.entrypoint
+-        def transform(self, code, burn_ul, reason, reason_utf8, children, data):
++        def transform(self, code, burn_ul, added_ul, reason, reason_utf8, children, data):
+             token_id = self.p_token_id_of(code)
+             self.p_assert_operable(token_id)
+             assert burn_ul > 0, "BIOID_BURN"
+@@ -553,8 +553,29 @@
+                 or reason == "split"
+                 or reason == "rna_isolation"
+                 or reason == "dna_isolation"
++                or reason == "dilution"
++                or reason == "titration"
+             )
+             assert known, "BIOID_BAD_REASON"
++            # Conservation applies to the source material consumed (burn_ul), not to the
++            # liquid volume of the outputs. A plain aliquot or split adds no liquid, so its
++            # children cannot hold more than was drawn. Isolation, elution, dilution and
++            # titration add buffer or diluent: outputs may exceed burn_ul. When the added
++            # volume is recorded, outputs are capped by burn_ul + added_ul. Dilution and
++            # titration must record it (a dilution factor F maps to added = burn * (F - 1)).
++            total_children = sp.nat(0)
++            for volume_child in children:
++                total_children += volume_child.volume_ul
++            if reason == "aliquoted" or reason == "split":
++                assert added_ul.is_none(), "BIOID_VOLUME"
++                assert total_children <= burn_ul, "BIOID_VOLUME"
++            else:
++                if reason == "dilution" or reason == "titration":
++                    assert added_ul.is_some(), "BIOID_VOLUME"
++                if added_ul.is_some():
++                    added = added_ul.unwrap_some()
++                    assert added > 0, "BIOID_VOLUME"
++                    assert total_children <= burn_ul + added, "BIOID_VOLUME"
+             token = self.data.tokens[token_id]
+             source = self.p_wallet(token.wallet)
+             assert source.active, "BIOID_INACTIVE"
+@@ -629,6 +650,7 @@
+                     token_id=token_id,
+                     code=code,
+                     burned=burn_ul,
++                    added=added_ul,
+                     balance=updated,
+                     reason=reason,
+                 ),
+@@ -662,6 +684,8 @@
+             assert source.active, "BIOID_INACTIVE"
+             assert sp.sender == source.custodian, "BIOID_NOT_CUSTODIAN"
+             assert source.type == "INTAKE" or source.type == "STORAGE", "BIOID_ADJUST"
++            if reason != "measured":
++                assert volume_ul <= token.balance, "BIOID_ADJUST"
+             self.data.supply[token_id] = volume_ul
+             self.p_set_balance(
+                 sp.record(
+@@ -674,7 +698,13 @@
+             with sp.modify_record(self.data.tokens[token_id]) as row:
+                 row.balance = volume_ul
+             sp.emit(
+-                sp.record(token_id=token_id, code=code, volume=volume_ul, reason=reason),
++                sp.record(
++                    token_id=token_id,
++                    code=code,
++                    previous=token.balance,
++                    volume=volume_ul,
++                    reason=reason,
++                ),
+                 tag="ADJUST",
+             )
+ 
+@@ -707,9 +737,9 @@
+             assert token.status == "frozen", "BIOID_FROZEN"
+             assert self.data.outcomes[token.root_id] == "destroy", "BIOID_BAD_REASON"
+             source = self.p_wallet(token.wallet)
+-            assert sp.sender == source.custodian or sp.sender == self.data.owners[token.root_id], (
+-                "BIOID_NOT_CUSTODIAN"
+-            )
++            # The owner orders destruction (withdraw). The custodian holding the tube
++            # attests that it happened. One key must not do both.
++            assert sp.sender == source.custodian, "BIOID_NOT_CUSTODIAN"
+             if token.balance > 0:
+                 self.data.supply[token_id] = 0
+                 self.p_set_balance(
+@@ -736,6 +766,7 @@
+             assert token.parent_id.is_none(), "BIOID_NOT_ROOT"
+             assert self.data.owners[token.root_id] == sp.sender, "BIOID_NOT_OWNER"
+             assert self.data.outcomes[token.root_id] == "anonymise", "BIOID_BAD_REASON"
++            assert token.status == "frozen", "BIOID_FROZEN"
+             for member in self.data.by_root[token.root_id].elements():
+                 with sp.modify_record(self.data.tokens[member]) as row:
+                     row.status = "anonymised"
+@@ -1099,6 +1130,7 @@
+         contract.transform(
+             code="SY00000301",
+             burn_ul=500,
++            added_ul=None,
+             reason="aliquoted",
+             reason_utf8=utf8("aliquoted"),
+             children=[child("SY00000311", 500, "aliquot", aliq.address)],
+@@ -1136,6 +1168,7 @@
+         contract.transform(
+             code="SY00000302",
+             burn_ul=3000,
++            added_ul=None,
+             reason="aliquoted",
+             reason_utf8=utf8("aliquoted"),
+             children=[
+@@ -1170,6 +1203,7 @@
+         contract.transform(
+             code="SY00000322",
+             burn_ul=2000,
++            added_ul=None,
+             reason="rna_isolation",
+             reason_utf8=utf8("rna_isolation"),
+             children=[child("SY00000341", 80, "RNA", freezer.address)],
+@@ -1332,6 +1366,7 @@
+         contract.transform(
+             code="SY00000401",
+             burn_ul=100,
++            added_ul=None,
+             reason="aliquoted",
+             reason_utf8=utf8("aliquoted"),
+             children=[child("SY00000411", 100, "aliquot", aliq.address)],
+@@ -1579,6 +1614,7 @@
+         contract.transform(
+             code="SY00000401",
+             burn_ul=1,
++            added_ul=None,
+             reason="aliquoted",
+             reason_utf8=utf8("aliquoted"),
+             children=[child("SY00000411", 1, "aliquot", aliq.address)],
+@@ -1622,3 +1658,65 @@
+             _valid=False,
+             _exception="FA2_NOT_OWNER",
+         )
++
++    @sp.add_test()
++    def test_volume_rules():
++        # v0.4: conservation caps plain aliquots and splits by the burn. Steps that add
++        # liquid (isolation/elution, dilution, titration) may produce more volume.
++        scenario = sp.test_scenario("bioid_volume")
++        contract = bioid.Bioid(admin.address, metadata())
++        scenario += contract
++        tube = sp.View(contract, "tube")
++        register_core(contract, admin)
++        mint(contract, "SY00000501", 2000, intake.address, lab)
++        contract.move(code="SY00000501", to_wallet=aliq.address, reason="to_process", data=None, _sender=lab)
++
++        def tf(burn, added, reason, kids, valid=True, exc=None):
++            if valid:
++                contract.transform(code="SY00000501", burn_ul=burn, added_ul=added, reason=reason,
++                    reason_utf8=utf8(reason), children=kids, data=None, _sender=lab)
++            else:
++                contract.transform(code="SY00000501", burn_ul=burn, added_ul=added, reason=reason,
++                    reason_utf8=utf8(reason), children=kids, data=None, _sender=lab,
++                    _valid=False, _exception=exc)
++
++        # Capped split: 600 + 600 from a 1000 burn creates volume and is refused.
++        tf(1000, None, "aliquoted", [child("SY00000511", 600, "aliquot", aliq.address),
++            child("SY00000512", 600, "aliquot", aliq.address)], False, "BIOID_VOLUME")
++        tf(1000, None, "split", [child("SY00000511", 1001, "aliquot", aliq.address)], False, "BIOID_VOLUME")
++        # An aliquot that claims added liquid is a dilution in disguise.
++        tf(100, sp.Some(100), "aliquoted", [child("SY00000511", 150, "aliquot", aliq.address)], False, "BIOID_VOLUME")
++        # Split with dead-volume loss is fine.
++        tf(1000, None, "split", [child("SY00000511", 490, "aliquot", aliq.address),
++            child("SY00000512", 490, "aliquot", aliq.address)])
++        scenario.verify(tube("SY00000501").balance == 1000)
++        # Extraction: 50 uL consumed, eluted in 100 uL, no added volume recorded: allowed.
++        tf(50, None, "dna_isolation", [child("SY00000521", 100, "dna", aliq.address)])
++        # Extraction with recorded elution: output capped by burn + added.
++        tf(50, sp.Some(100), "dna_isolation", [child("SY00000522", 150, "dna", aliq.address)])
++        tf(50, sp.Some(100), "dna_isolation", [child("SY00000523", 151, "dna", aliq.address)], False, "BIOID_VOLUME")
++        # Dilution 1:10: 100 uL plus 900 uL diluent gives 1000 uL, more than the burn.
++        tf(100, None, "dilution", [child("SY00000531", 1000, "diluted", aliq.address)], False, "BIOID_VOLUME")
++        tf(100, sp.Some(900), "dilution", [child("SY00000531", 1000, "diluted", aliq.address)])
++        scenario.verify(tube("SY00000531").balance == 1000)
++        tf(100, sp.Some(900), "titration", [child("SY00000532", 500, "diluted", aliq.address),
++            child("SY00000533", 501, "diluted", aliq.address)], False, "BIOID_VOLUME")
++        # Source material consumed is still conserved: the burn cannot exceed the balance.
++        scenario.verify(tube("SY00000501").balance == 800)
++        tf(801, sp.Some(10000), "dilution", [child("SY00000534", 1000, "diluted", aliq.address)], False, "BIOID_BURN")
++        # adjust_volume: only "measured" may raise a volume.
++        contract.move(code="SY00000521", to_wallet=freezer.address, reason="stored", data=None, _sender=lab)
++        contract.adjust_volume(code="SY00000521", volume_ul=120, reason="evaporation", _sender=lab,
++            _valid=False, _exception="BIOID_ADJUST")
++        contract.adjust_volume(code="SY00000521", volume_ul=95, reason="evaporation", _sender=lab)
++        contract.adjust_volume(code="SY00000521", volume_ul=97, reason="measured", _sender=lab)
++        scenario.verify(tube("SY00000521").balance == 97)
++        # confirm_destroyed: the owner orders, only the custodian attests.
++        contract.withdraw(code="SY00000501", outcome="destroy", _sender=owner)
++        contract.confirm_destroyed("SY00000521", _sender=owner, _valid=False, _exception="BIOID_NOT_CUSTODIAN")
++        contract.confirm_destroyed("SY00000521", _sender=lab)
++        # unfreeze_anonymised runs once.
++        mint(contract, "SY00000601", 100, intake.address, lab)
++        contract.withdraw(code="SY00000601", outcome="anonymise", _sender=owner)
++        contract.unfreeze_anonymised("SY00000601", _sender=owner)
++        contract.unfreeze_anonymised("SY00000601", _sender=owner, _valid=False, _exception="BIOID_FROZEN")

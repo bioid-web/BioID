@@ -9,6 +9,8 @@ The phone viewer is a static page under [`app/`](../app/README.md). It reads the
 
 Open a tube by scanning its Data Matrix or QR code, by typing the tube code or token id, or by following a link such as `?tube=SY00000221`. The page shows the current wallet, the volume in µL, the custody timeline, parents and children, and datasets, including those inherited from ancestor tubes.
 
+A single lookup reads only that tube: its row in the contract's `tokens` big map, its contract events, the operations that emitted them, and then its parents and children up to the 8-generation lineage limit. The status shown is the effective one. A tube whose root has been withdrawn shows as frozen or stopped even if its own row still says active. The work grows with the size of that lineage, not with the size of the contract. On the demo contract a deep lineage takes about 16 requests. The full contract is loaded only for browsing.
+
 The default network is Shadownet. Mainnet is only a read-only slot in [`app/config.js`](../app/config.js), with no contract filled in.
 
 ## Hosting

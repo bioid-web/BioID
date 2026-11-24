@@ -36,7 +36,7 @@ Admin registers wallets and sets `active`. A custodian may update `label` and `m
 python3 contracts/bioid_fa2.py
 ```
 
-Two scenarios, `bioid_happy` and `bioid_rejections`, cover the reception-to-external-use path and the rejection codes. SmartPy writes Michelson next to the script, under `contracts/bioid_happy/` and `contracts/bioid_rejections/`. Those directories are gitignored.
+Two scenarios, `bioid_happy` and `bioid_rejections`, cover the reception-to-external-use path and the rejection codes. Proposed v0.4 changes (volume rules by transformation type, constant-cost withdrawal, stop-use escalation, explicit lineage depth) are tested patches in [`proposals/`](proposals/README.md). They are not applied here, so this file stays identical to the deployed Shadownet contract. SmartPy writes Michelson next to the script, under `contracts/bioid_happy/` and `contracts/bioid_rejections/`. Those directories are gitignored.
 
 ## Size
 
@@ -86,4 +86,4 @@ Origination burns about 8 tez of storage on Shadownet (the code is about 32 KB).
 
 The file name under `bioid_happy/` can differ; the script picks the contract `.tz` it just wrote. Copy the printed `KT1` into `TEZOS_CONTRACT` for the bridge. Do not commit the key, the storage file, or the KT1 if it is tied to a secret.
 
-The bridge `TezosBackend` encodes `mint_primary`, `move`, `ship`, `receive`, `transform`, `consume`, `report_use` (when the source wallet is `EXTERNAL_USER`), `attach_data`, `request_access` and `approve_access`. `submit` then raises `InjectionRefused`. It does not broadcast.
+The bridge `TezosBackend` encodes `mint_primary`, `move`, `ship`, `receive`, `transform`, `consume`, `report_use` (when the source wallet is `EXTERNAL_USER`), `attach_data`, `request_access`, `approve_access`, `withdraw`, `confirm_destroyed` and `unfreeze_anonymised`. `submit` then raises `InjectionRefused`. It does not broadcast.

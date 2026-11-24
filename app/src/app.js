@@ -11,7 +11,7 @@ import {
   viewToken,
 } from "./parse.js";
 import { cameraErrorText, startScan } from "./scan.js";
-import { loadContract } from "./tzkt.js";
+import { loadContract, loadTube } from "./tzkt.js";
 
 const app = document.querySelector("#app");
 const cache = new Map();
@@ -51,8 +51,13 @@ async function ensureData() {
     render();
     return;
   }
-  if (cache.has(network.id)) {
-    state.data = cache.get(network.id);
+  // A scanned tube reads only that tube's rows (per-tube queries); the overview
+  // list without a lookup still reads the whole contract.
+  const lookup = currentLookup();
+  const single = lookup.kind === "code" || lookup.kind === "token";
+  const key = single ? `${network.id}:${lookup.kind}:${lookup.code || lookup.tokenId}` : network.id;
+  if (cache.has(key) || (single && cache.has(network.id))) {
+    state.data = cache.get(key) || cache.get(network.id);
     state.loading = false;
     render();
     return;
@@ -61,7 +66,7 @@ async function ensureData() {
   state.data = null;
   render();
   try {
-    const raw = await loadContract(network);
+    const raw = single ? await loadTube(network, lookup) : await loadContract(network);
     const indexes = loadIndexes({
       codeIndex: raw.codeIndex,
       tokens: raw.tokens,
@@ -75,7 +80,7 @@ async function ensureData() {
       events: raw.events,
       explorer: network.explorer,
     });
-    cache.set(network.id, indexes);
+    cache.set(key, indexes);
     state.data = indexes;
     state.error = "";
   } catch (error) {
@@ -346,7 +351,7 @@ function showCode(code) {
   url.searchParams.set("tube", code);
   url.searchParams.delete("token");
   history.pushState({}, "", url);
-  render();
+  ensureData();
 }
 
 function applyScan(raw) {
@@ -358,7 +363,7 @@ function applyScan(raw) {
   else if (parsed.kind === "token") url.searchParams.set("token", parsed.tokenId);
   else if (parsed.kind === "unknown") url.searchParams.set("tube", parsed.raw);
   history.pushState({}, "", url);
-  render();
+  ensureData();
   const field = document.querySelector("#lookup");
   if (field) field.focus();
 }

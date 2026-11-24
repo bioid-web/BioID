@@ -41,6 +41,21 @@ def _build_parser() -> argparse.ArgumentParser:
     rec.add_argument("--inventory", required=True, type=Path)
     rec.add_argument("--mapping", required=True, type=Path)
     rec.add_argument("--db", required=True, type=Path)
+
+    fp = sub.add_parser(
+        "fingerprint",
+        help="SHA-256 fingerprint of a document for attach_data; --salt-file for guessable documents",
+    )
+    fp.add_argument("--file", required=True, type=Path)
+    fp.add_argument("--salt-file", type=Path, help="read the salt from this file (raw bytes)")
+    fp.add_argument("--new-salt", type=Path, help="write a fresh random salt to this file and use it")
+    fp.add_argument("--verify", help="expected 64-hex fingerprint; exit 1 if it does not match")
+
+    ep = sub.add_parser("export-epcis", help="write a tube lineage as a GS1 EPCIS 2.0 JSON-LD document")
+    ep.add_argument("--tube", required=True)
+    ep.add_argument("--db", required=True, type=Path)
+    ep.add_argument("--base", default="https://example.org/bioid/", help="https base for tube and wallet URIs")
+    ep.add_argument("--out", type=Path, help="write to this file instead of stdout")
     return parser
 
 
@@ -115,6 +130,50 @@ def _cmd_reconcile(args: argparse.Namespace) -> int:
     return 1 if report.mismatches else 0
 
 
+def _cmd_fingerprint(args: argparse.Namespace) -> int:
+    from bioid_bridge.fingerprint import fingerprint, new_salt, verify
+
+    content = args.file.read_bytes()
+    salt = None
+    if args.salt_file and args.new_salt:
+        print("use --salt-file or --new-salt, not both")
+        return 2
+    if args.new_salt:
+        if args.new_salt.exists():
+            print(f"{args.new_salt} exists; refusing to overwrite a salt")
+            return 2
+        salt = new_salt()
+        args.new_salt.write_bytes(salt)
+    elif args.salt_file:
+        salt = args.salt_file.read_bytes()
+    if args.verify:
+        ok = verify(content, args.verify, salt)
+        print("match" if ok else "MISMATCH")
+        return 0 if ok else 1
+    print(fingerprint(content, salt))
+    return 0
+
+
+def _cmd_export_epcis(args: argparse.Namespace) -> int:
+    from bioid_bridge.epcis import EpcisExporter
+
+    ledger = MockLedger(args.db)
+    try:
+        try:
+            document = EpcisExporter(ledger, args.base).document(args.tube)
+        except KeyError:
+            print(f"unknown tube {args.tube}")
+            return 2
+    finally:
+        ledger.close()
+    text = json.dumps(document, indent=2, ensure_ascii=False)
+    if args.out:
+        args.out.write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -126,5 +185,9 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_inventory(args)
     if args.command == "reconcile":
         return _cmd_reconcile(args)
+    if args.command == "fingerprint":
+        return _cmd_fingerprint(args)
+    if args.command == "export-epcis":
+        return _cmd_export_epcis(args)
     parser.error(f"unknown command {args.command}")
     return 2

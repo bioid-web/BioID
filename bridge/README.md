@@ -17,7 +17,9 @@ This package does not deploy a contract, does not hold a key, and does not talk 
 | `service.py` | Batching, retries, idempotency, fallback when one event in a batch is invalid |
 | `tezos.py` | `TezosBackend` stub. Testnet configuration only. Cannot submit |
 | `reconcile.py` | LIMS snapshot versus ledger |
-| `cli.py` | `replay`, `history`, `inventory`, `reconcile` |
+| `fingerprint.py` | Salted file fingerprints for `attach_data` (HMAC-SHA256) |
+| `epcis.py` | GS1 EPCIS 2.0 JSON-LD export of one tube's lineage |
+| `cli.py` | `replay`, `history`, `inventory`, `reconcile`, `fingerprint`, `export-epcis` |
 
 ## Run the example
 
@@ -73,6 +75,7 @@ Default batch size is 8. If a batch fails a transition rule, the ledger rolls th
 | `TEZOS_RPC_URL` | That testnet's RPC URL |
 | `TEZOS_CONTRACT` | Contract address, empty until `contracts/` has the FA2 contract |
 | `TEZOS_KEY_REF` | HSM or cloud KMS alias, such as `kms://alias/syn-custodian-lab` |
+| `TEZOS_CONTRACT_VERSION` | `v0.3` (default, the deployed contract) or `v0.4` (a testnet origination of the [proposal](../contracts/proposals/README.md); `transform` then carries `added_ul`) |
 
 A network or RPC URL that indicates mainnet is refused. Ghostnet is refused too: it is no longer a public testnet. `TEZOS_NETWORK` must be `shadownet`, and the RPC URL must be a Shadownet endpoint. A value that looks like a raw secret key (`edsk…` and the other secret prefixes) is refused. `submit` encodes the contract entrypoint and then raises `InjectionRefused`. It does not sign, broadcast, or originate. Copy [`bridge/.env.example`](.env.example) if you want the variable names locally. Do not fill it with a secret. The origination steps are in [`contracts/README.md`](../contracts/README.md).
 
@@ -83,8 +86,63 @@ cd bridge
 python3 -m pytest
 ```
 
-The tests cover mapping, rejection of an illegal transform and of a ship out of a process wallet, idempotent replay, partial-volume burns (50 of 200 left at 150, and 500 of 2000 left at 1500 with the parent still present), and the one deliberate reconciliation mismatch.
+The tests cover mapping, rejection of an illegal transform and of a ship out of a process wallet, idempotent replay, partial-volume burns (50 of 200 left at 150, and 500 of 2000 left at 1500 with the parent still present), the one deliberate reconciliation mismatch, volume rules by transformation type, withdrawal and escalation, the lineage depth limit, salted fingerprints and the EPCIS export.
+
+To also validate the EPCIS output against the official GS1 JSON schema, download [epcis-json-schema.json](https://ref.gs1.org/standards/epcis/2.0.0/epcis-json-schema.json), install `jsonschema` and `rfc3987`, and set `BIOID_EPCIS_SCHEMA` to the file path. Without it, that test is skipped.
 
 ## Data
 
 Do not point this bridge at a real LIMS export. The translator will send only the fields it maps, but the safe pattern is still the one in the integration guide: pseudonymous tube codes, location codes, event ids, volumes, and an opaque consent reference. No names, and no table that links a person to that reference.
+
+## Withdrawal, freeze and destruction
+
+The bridge models the contract's withdrawal path, so a replayed feed enforces principle 8 of the [core operating principles](../docs/principles.md).
+
+| LIMS event type (example mapping) | Operation | Effect on the ledger |
+|---|---|---|
+| `withdrawn_destroy`, `withdrawn_anonymise`, `withdrawn_stop_use` | `withdraw` | Signed by the root's `owner`. Freezes every tube in the lineage, in whatever wallet it sits (`stop_use` sets `stopped`). One history row per tube. A second withdrawal on the same root is refused, except that `stop_use` can be escalated to `destroy` or `anonymise`. |
+| `destruction_confirmed` | `confirm_destroyed` | Only after outcome `destroy`. Burns the tube's remaining volume and sets `destroyed`. One call per tube. |
+| `anonymisation_done` | `unfreeze_anonymised` | Only after outcome `anonymise`, signed by the owner. Clears `consent_ref` and reopens the lineage. |
+
+A frozen, stopped or destroyed tube refuses move, ship, receive, transform, burn, adjust and access operations. `attach_data` stays open, as in the contract.
+
+The v0.4 contract proposal records the outcome once, on the root, and each operation checks it. The offline ledger writes one row per tube so that `history` stays readable. Both give the same result.
+
+## Lineage depth
+
+A lineage has at most 8 generations, the root included (`MAX_GENERATIONS` in `rules.py`). A transform that would create a ninth is refused and goes to the review queue. The contract's lineage views walk 8 tubes, and the v0.4 proposal enforces the same limit on-chain (`BIOID_DEPTH`).
+
+## Salted fingerprints
+
+A plain SHA-256 of a small file, such as a one-line result, can be guessed by hashing likely contents. `fingerprint` computes HMAC-SHA256 with a 32-byte random salt (`--new-salt` writes one, `--salt-file` reads it) kept off-chain, next to the file. Only the fingerprint goes into `attach_data`.
+
+```bash
+python3 -m bioid_bridge fingerprint --file result.csv --new-salt result.csv.salt
+python3 -m bioid_bridge fingerprint --file result.csv --salt-file result.csv.salt --verify <hex>
+```
+
+Lose the salt and the fingerprint can no longer be checked. Share the salt only with someone who is meant to verify the file.
+
+## EPCIS export
+
+`export-epcis` writes one tube's lineage as a GS1 EPCIS 2.0 JSON-LD document, so that supply-chain tools can read it. Mint, move, ship and receive become ObjectEvents. A transform becomes a TransformationEvent. A lineage-wide withdrawal becomes one event that lists every tube. BioID-specific fields (volume, reason, transaction id) use the extension namespace `https://bioid-web.github.io/BioID/ns/epcis#`. Tube and location identifiers are URIs under `--base` (default `https://example.org/bioid/`), not GS1 keys.
+
+```bash
+python3 -m bioid_bridge export-epcis --tube SY00000107 --db .state/bridge.sqlite --out lineage.epcis.json
+```
+
+The `owner` that signs a withdrawal is an institutional role (the study or biobank that holds the consent record), never the donor. Donors hold no wallets; a donor's withdrawal reaches the chain through that institution.
+
+## Volume conservation and transformations
+
+Conservation applies to the source material consumed, that is the `burn_uL` taken from the parent, not to the liquid volume of the outputs. A step can never consume more than the parent holds.
+
+| Transformation | Liquid added | Rule for the children |
+|---|---|---|
+| `aliquoted`, `split` | none | Sum of children ≤ `burn_uL`. Sending `added_uL` is refused: a step that adds liquid is a dilution. |
+| `rna_isolation`, `dna_isolation` (extraction, elution) | elution buffer | May exceed `burn_uL`. `added_uL` is optional; when sent, sum of children ≤ `burn_uL + added_uL`. |
+| `dilution`, `titration` | diluent | Must send `added_uL` or `dilution_factor` (final volume / initial volume, so `added_uL = burn_uL × (F − 1)`). Sum of children ≤ `burn_uL + added_uL`. |
+
+The ledger history row of the parent records the transformation type (`reason`), the volume consumed (`volume_ul`) and the added volume (`added_ul`). `adjust` with `evaporation` or `dead_volume` can only lower a volume; only `measured` can raise it.
+
+The deployed Shadownet contract does not yet take `added_ul`. The matching contract change is the tested proposal in [`contracts/proposals/`](../contracts/proposals/README.md); until it is originated on a testnet, `TezosBackend` encodes `transform` for the deployed contract and leaves `added_ul` off-chain.

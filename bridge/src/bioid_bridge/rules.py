@@ -24,7 +24,27 @@ _MOVES: dict[tuple[str, str], frozenset[str]] = {
     ("QUARANTINE", "TRANSIT"): frozenset({"shipped"}),
 }
 
-_TRANSFORM_REASONS = frozenset({"aliquoted", "split", "rna_isolation", "dna_isolation"})
+_TRANSFORM_REASONS = frozenset(
+    {"aliquoted", "split", "rna_isolation", "dna_isolation", "dilution", "titration"}
+)
+# Conservation applies to the source material consumed (burn_uL), not to the liquid
+# volume of the outputs. A plain aliquot or split of the same material adds no liquid,
+# so its children cannot hold more than was drawn.
+_CONSERVING_REASONS = frozenset({"aliquoted", "split"})
+# Steps that add buffer or diluent (isolation with elution, dilution, titration) may
+# produce more volume than was drawn. When the added volume is recorded, outputs are
+# capped by burn_uL + added_uL. Dilution and titration must record it.
+_ADDING_REASONS = frozenset({"rna_isolation", "dna_isolation", "dilution", "titration"})
+_ADDED_REQUIRED = frozenset({"dilution", "titration"})
+_WITHDRAW_OUTCOMES = frozenset({"destroy", "anonymise", "stop_use"})
+# stop_use may later be made stricter. Nothing else changes once recorded.
+_ESCALATIONS = frozenset({"destroy", "anonymise"})
+# Generations in one lineage, root included. Matches range(0, 8) in the contract's
+# lineage_uris and lineage_has views and the BIOID_DEPTH check in the v0.4 proposal.
+MAX_GENERATIONS = 8
+# Statuses in which custody, volume and access operations are refused. Mirrors
+# p_assert_operable in contracts/bioid_fa2.py. attach_data stays open, as in the contract.
+_NOT_OPERABLE = frozenset({"frozen", "stopped", "destroyed"})
 _ADJUST_REASONS = frozenset({"measured", "evaporation", "dead_volume"})
 
 
@@ -64,6 +84,42 @@ def validate(op: Operation, token: dict | None, registry: Registry) -> None:
 
     if token is None:
         raise RuleViolation(f"unknown tube {op.tube}")
+
+    if op.op == "withdraw":
+        if token["parent_id"]:
+            raise RuleViolation("withdraw is recorded on the root tube")
+        if op.reason not in _WITHDRAW_OUTCOMES:
+            raise RuleViolation(f"unknown withdrawal outcome {op.reason}")
+        previous = token.get("outcome")
+        escalation = previous == "stop_use" and op.reason in _ESCALATIONS
+        if previous and not escalation:
+            # Only stop_use may later be escalated to destroy or anonymise.
+            raise RuleViolation(f"{op.tube} already has a withdrawal outcome ({previous})")
+        if not escalation and token["status"] in _NOT_OPERABLE:
+            raise RuleViolation(f"{op.tube} is already {token['status']}")
+        if not op.owner or op.owner != token["owner"]:
+            raise RuleViolation("withdraw must be signed by the owner of the root tube")
+        return
+
+    if op.op == "confirm_destroyed":
+        if token["status"] != "frozen" or token.get("outcome") != "destroy":
+            raise RuleViolation("confirm_destroyed needs a lineage frozen with outcome destroy")
+        return
+
+    if op.op == "unfreeze_anonymised":
+        if token["parent_id"]:
+            raise RuleViolation("unfreeze_anonymised is recorded on the root tube")
+        if token.get("outcome") != "anonymise":
+            raise RuleViolation("unfreeze_anonymised needs outcome anonymise")
+        if token["status"] != "frozen":
+            raise RuleViolation(f"{op.tube} is {token['status']}, not frozen")
+        if not op.owner or op.owner != token["owner"]:
+            raise RuleViolation("unfreeze_anonymised must be signed by the owner")
+        return
+
+    if op.op != "attach_data" and token["status"] in _NOT_OPERABLE:
+        raise RuleViolation(f"{op.tube} is {token['status']}")
+
     if op.from_wallet and op.from_wallet != token["wallet"]:
         raise RuleViolation(f"{op.tube} is in {token['wallet']}, not {op.from_wallet}")
 
@@ -114,10 +170,37 @@ def validate(op: Operation, token: dict | None, registry: Registry) -> None:
             raise RuleViolation("burn exceeds balance")
         if not op.children:
             raise RuleViolation("transform mints at least one child")
+        if token.get("depth", 0) + 1 >= MAX_GENERATIONS:
+            # The contract's lineage views walk MAX_GENERATIONS tubes, root included.
+            # Refuse a deeper tube rather than let the views stop without saying so.
+            raise RuleViolation(
+                f"{op.tube} is generation {token.get('depth', 0)}; lineages stop at "
+                f"{MAX_GENERATIONS} generations (root included). Start a new root with a "
+                "recorded link instead"
+            )
         _same_place(op, token)
         for child in op.children:
             if child.volume_uL <= 0:
                 raise RuleViolation("child volume must be a positive integer")
+        total = sum(child.volume_uL for child in op.children)
+        if op.reason in _CONSERVING_REASONS:
+            if op.added_uL is not None:
+                raise RuleViolation(
+                    f"{op.reason} adds no liquid; record a dilution or isolation instead"
+                )
+            if total > op.burn_uL:
+                raise RuleViolation(
+                    f"{op.reason} children hold {total} uL but only {op.burn_uL} uL was drawn"
+                )
+        elif op.reason in _ADDING_REASONS:
+            if op.reason in _ADDED_REQUIRED and op.added_uL is None:
+                raise RuleViolation(f"{op.reason} must record added_uL or dilution_factor")
+            if op.added_uL is not None and total > op.burn_uL + op.added_uL:
+                raise RuleViolation(
+                    f"{op.reason} children hold {total} uL but only {op.burn_uL} uL drawn "
+                    f"plus {op.added_uL} uL added"
+                )
+        for child in op.children:
             dest = _wallet(registry, child.to_wallet, inbound=True)
             if dest.type not in {"STORAGE", "PROCESS"}:
                 raise RuleViolation("transform output is STORAGE or PROCESS")
@@ -152,6 +235,8 @@ def validate(op: Operation, token: dict | None, registry: Registry) -> None:
             raise RuleViolation(f"unknown adjust reason {op.reason}")
         if op.volume_uL is None or op.volume_uL < 0:
             raise RuleViolation("adjusted volume must be zero or a positive integer")
+        if op.reason != "measured" and op.volume_uL > token["balance_ul"]:
+            raise RuleViolation(f"{op.reason} can only lower the volume; use measured")
         return
 
     if op.op == "attach_data":

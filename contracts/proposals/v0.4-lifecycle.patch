@@ -1,0 +1,392 @@
+--- a/contracts/bioid_fa2.py	2026-11-24 08:40:13.561276178 +0100
++++ b/contracts/bioid_fa2.py	2026-11-24 09:01:07.755977223 +0100
+@@ -162,9 +162,11 @@
+                 sp.big_map(), sp.big_map[sp.address, wallet_t]
+             )
+             self.data.owners = sp.cast(sp.big_map(), sp.big_map[sp.nat, sp.address])
+-            self.data.by_root = sp.cast(
+-                sp.big_map(), sp.big_map[sp.nat, sp.set[sp.nat]]
+-            )
++            # Generation of each derived tube (roots are 0 and not stored). Lineage
++            # views walk at most MAX_GENERATIONS tubes, so transform refuses deeper ones.
++            self.data.depth = sp.cast(sp.big_map(), sp.big_map[sp.nat, sp.nat])
++            # Roots whose lineage has been anonymised (final; the outcome entry is removed).
++            self.data.anonymised = sp.cast(sp.big_map(), sp.big_map[sp.nat, sp.unit])
+             self.data.outcomes = sp.cast(sp.big_map(), sp.big_map[sp.nat, sp.string])
+             self.data.access_requests = sp.cast(
+                 sp.big_map(), sp.big_map[sp.nat, access_t]
+@@ -189,19 +191,26 @@
+ 
+         @sp.private(with_storage="read-only")
+         def p_assert_operable(self, token_id):
+-            status = self.data.tokens[token_id].status
+-            assert status != "frozen", "BIOID_FROZEN"
+-            assert status != "stopped", "BIOID_FROZEN"
+-            assert status != "destroyed", "BIOID_DESTROYED"
++            # v0.4: a withdrawal is one write on the root (outcomes[root_id]); every
++            # descendant checks it here at constant cost, wherever it sits. Returns the token.
++            token = self.data.tokens[token_id]
++            assert not token.destroyed, "BIOID_DESTROYED"
++            assert not (token.root_id in self.data.outcomes), "BIOID_FROZEN"
++            return token
+ 
+-        @sp.private(with_storage="read-write")
+-        def p_remember(self, p):
+-            if p.root_id in self.data.by_root:
+-                ids = self.data.by_root[p.root_id]
+-                ids.add(p.token_id)
+-                self.data.by_root[p.root_id] = ids
+-            else:
+-                self.data.by_root[p.root_id] = {p.token_id}
++        @sp.private(with_storage="read-only")
++        def p_status(self, token_id):
++            token = self.data.tokens[token_id]
++            status = token.status
++            if token.root_id in self.data.anonymised:
++                status = "anonymised"
++            if token.root_id in self.data.outcomes:
++                status = "frozen"
++                if self.data.outcomes[token.root_id] == "stop_use":
++                    status = "stopped"
++            if token.destroyed:
++                status = "destroyed"
++            return status
+ 
+         @sp.private(with_storage="read-write")
+         def p_write_metadata(self, p):
+@@ -254,11 +263,9 @@
+ 
+         @sp.private(with_storage="read-write")
+         def p_do_ship(self, p):
+-            status = self.data.tokens[p.token_id].status
+-            assert status != "frozen", "BIOID_FROZEN"
+-            assert status != "stopped", "BIOID_FROZEN"
+-            assert status != "destroyed", "BIOID_DESTROYED"
+             token = self.data.tokens[p.token_id]
++            assert not token.destroyed, "BIOID_DESTROYED"
++            assert not (token.root_id in self.data.outcomes), "BIOID_FROZEN"
+             assert token.wallet in self.data.wallet_registry, "BIOID_UNKNOWN_WALLET"
+             source = self.data.wallet_registry[token.wallet]
+             assert sp.sender == source.custodian, "BIOID_NOT_CUSTODIAN"
+@@ -282,12 +289,10 @@
+ 
+         @sp.private(with_storage="read-write")
+         def p_do_consume(self, p):
+-            status = self.data.tokens[p.token_id].status
+-            assert status != "frozen", "BIOID_FROZEN"
+-            assert status != "stopped", "BIOID_FROZEN"
+-            assert status != "destroyed", "BIOID_DESTROYED"
+-            assert p.amount > 0, "BIOID_BURN"
+             token = self.data.tokens[p.token_id]
++            assert not token.destroyed, "BIOID_DESTROYED"
++            assert not (token.root_id in self.data.outcomes), "BIOID_FROZEN"
++            assert p.amount > 0, "BIOID_BURN"
+             assert token.wallet in self.data.wallet_registry, "BIOID_UNKNOWN_WALLET"
+             source = self.data.wallet_registry[token.wallet]
+             assert source.active, "BIOID_INACTIVE"
+@@ -404,7 +409,6 @@
+             self.data.next_token_id += 1
+             self.data.code_index[param.code] = token_id
+             self.data.owners[token_id] = param.owner
+-            self.p_remember(sp.record(root_id=token_id, token_id=token_id))
+             self.data.supply[token_id] = param.volume_ul
+             self.data.ledger[(param.to_wallet, token_id)] = param.volume_ul
+             self.data.attachments[token_id] = []
+@@ -447,8 +451,7 @@
+         @sp.entrypoint
+         def move(self, code, to_wallet, reason, data):
+             token_id = self.p_token_id_of(code)
+-            self.p_assert_operable(token_id)
+-            token = self.data.tokens[token_id]
++            token = self.p_assert_operable(token_id)
+             source = self.p_wallet(token.wallet)
+             assert sp.sender == source.custodian, "BIOID_NOT_CUSTODIAN"
+             dest = self.p_wallet(to_wallet)
+@@ -501,8 +504,7 @@
+         @sp.entrypoint
+         def receive(self, code, to_wallet, data):
+             token_id = self.p_token_id_of(code)
+-            self.p_assert_operable(token_id)
+-            token = self.data.tokens[token_id]
++            token = self.p_assert_operable(token_id)
+             source = self.p_wallet(token.wallet)
+             assert source.type == "TRANSIT", "BIOID_NOT_TRANSIT"
+             dest = self.p_wallet(to_wallet)
+@@ -546,7 +548,7 @@
+         @sp.entrypoint
+         def transform(self, code, burn_ul, added_ul, reason, reason_utf8, children, data):
+             token_id = self.p_token_id_of(code)
+-            self.p_assert_operable(token_id)
++            token = self.p_assert_operable(token_id)
+             assert burn_ul > 0, "BIOID_BURN"
+             known = (
+                 reason == "aliquoted"
+@@ -576,7 +578,6 @@
+                     added = added_ul.unwrap_some()
+                     assert added > 0, "BIOID_VOLUME"
+                     assert total_children <= burn_ul + added, "BIOID_VOLUME"
+-            token = self.data.tokens[token_id]
+             source = self.p_wallet(token.wallet)
+             assert source.active, "BIOID_INACTIVE"
+             assert source.type == "PROCESS", "BIOID_NOT_PROCESS"
+@@ -595,6 +596,13 @@
+             )
+             with sp.modify_record(self.data.tokens[token_id]) as row:
+                 row.balance = updated
++            # Lineage views follow parents for MAX_GENERATIONS (8) tubes, root included.
++            # Refuse a ninth generation instead of letting the views stop silently.
++            child_depth = self.data.depth.get(token_id, default=0) + 1
++            assert child_depth < 8, "BIOID_DEPTH"
++            child_consent = token.consent_ref
++            if token.root_id in self.data.anonymised:
++                child_consent = ""
+             for child in children:
+                 assert child.volume_ul > 0, "BIOID_MINT_DEST"
+                 assert not (child.code in self.data.code_index), "BIOID_EXISTS"
+@@ -608,7 +616,7 @@
+                 self.data.supply[child_id] = child.volume_ul
+                 self.data.ledger[(child.to_wallet, child_id)] = child.volume_ul
+                 self.data.attachments[child_id] = []
+-                self.p_remember(sp.record(root_id=token.root_id, token_id=child_id))
++                self.data.depth[child_id] = child_depth
+                 self.data.tokens[child_id] = sp.record(
+                     code=child.code,
+                     code_utf8=child.code_utf8,
+@@ -617,7 +625,7 @@
+                     sample_type=child.sample_type,
+                     sample_type_utf8=child.sample_type_utf8,
+                     created_by=reason,
+-                    consent_ref=token.consent_ref,
++                    consent_ref=child_consent,
+                     wallet=child.to_wallet,
+                     balance=child.volume_ul,
+                     status=status_for(dest.type),
+@@ -676,10 +684,9 @@
+         @sp.entrypoint
+         def adjust_volume(self, code, volume_ul, reason):
+             token_id = self.p_token_id_of(code)
+-            self.p_assert_operable(token_id)
++            token = self.p_assert_operable(token_id)
+             known = reason == "measured" or reason == "evaporation" or reason == "dead_volume"
+             assert known, "BIOID_BAD_REASON"
+-            token = self.data.tokens[token_id]
+             source = self.p_wallet(token.wallet)
+             assert source.active, "BIOID_INACTIVE"
+             assert sp.sender == source.custodian, "BIOID_NOT_CUSTODIAN"
+@@ -714,18 +721,20 @@
+             token = self.data.tokens[token_id]
+             assert token.parent_id.is_none(), "BIOID_NOT_ROOT"
+             assert self.data.owners[token.root_id] == sp.sender, "BIOID_NOT_OWNER"
+-            assert not (token.root_id in self.data.outcomes), "BIOID_FROZEN"
+             known = outcome == "destroy" or outcome == "anonymise" or outcome == "stop_use"
+             assert known, "BIOID_BAD_REASON"
++            assert not (token.root_id in self.data.anonymised), "BIOID_FROZEN"
++            previous = self.data.outcomes.get_opt(token.root_id)
++            if previous.is_some():
++                # Escalation only: a stop_use may later become destroy or anonymise.
++                # Nothing else may be changed or undone.
++                assert previous.unwrap_some() == "stop_use", "BIOID_FROZEN"
++                assert outcome != "stop_use", "BIOID_FROZEN"
++            # Constant cost: one write on the root. Descendants read it in
++            # p_assert_operable; no loop over the lineage, so gas does not grow with it.
+             self.data.outcomes[token.root_id] = outcome
+-            status = "frozen"
+-            if outcome == "stop_use":
+-                status = "stopped"
+-            for member in self.data.by_root[token.root_id].elements():
+-                with sp.modify_record(self.data.tokens[member]) as row:
+-                    row.status = status
+             sp.emit(
+-                sp.record(root=code, outcome=outcome),
++                sp.record(root=code, root_id=token.root_id, outcome=outcome, previous=previous),
+                 tag="WITHDRAW",
+             )
+ 
+@@ -734,7 +743,7 @@
+             token_id = self.p_token_id_of(code)
+             token = self.data.tokens[token_id]
+             assert not token.destroyed, "BIOID_DESTROYED"
+-            assert token.status == "frozen", "BIOID_FROZEN"
++            assert token.root_id in self.data.outcomes, "BIOID_FROZEN"
+             assert self.data.outcomes[token.root_id] == "destroy", "BIOID_BAD_REASON"
+             source = self.p_wallet(token.wallet)
+             # The owner orders destruction (withdraw). The custodian holding the tube
+@@ -765,13 +774,18 @@
+             token = self.data.tokens[token_id]
+             assert token.parent_id.is_none(), "BIOID_NOT_ROOT"
+             assert self.data.owners[token.root_id] == sp.sender, "BIOID_NOT_OWNER"
+-            assert self.data.outcomes[token.root_id] == "anonymise", "BIOID_BAD_REASON"
+-            assert token.status == "frozen", "BIOID_FROZEN"
+-            for member in self.data.by_root[token.root_id].elements():
+-                with sp.modify_record(self.data.tokens[member]) as row:
+-                    row.status = "anonymised"
+-                    row.consent_ref = ""
+-            sp.emit(sp.record(root=code), tag="UNFREEZE")
++            # Runs once: afterwards the root is in `anonymised` and has no outcome.
++            assert not (token.root_id in self.data.anonymised), "BIOID_FROZEN"
++            assert self.data.outcomes.get(token.root_id, default="") == "anonymise", "BIOID_BAD_REASON"
++            # Constant cost: the outcome entry is removed (the lineage is operable again)
++            # and the root is marked anonymised. The tube view hides consent_ref for the
++            # whole lineage. Chain history keeps old values: anonymity comes from deleting
++            # the off-chain record that links consent_ref to a person.
++            del self.data.outcomes[token.root_id]
++            self.data.anonymised[token.root_id] = ()
++            with sp.modify_record(self.data.tokens[token_id]) as row:
++                row.consent_ref = ""
++            sp.emit(sp.record(root=code, root_id=token.root_id), tag="UNFREEZE")
+ 
+         @sp.entrypoint
+         def request_access(self, code, agreement_ref, agreement_hash, duo_codes):
+@@ -821,8 +835,8 @@
+         @sp.entrypoint
+         def report_use(self, code, action, volume, to_transit, data):
+             token_id = self.p_token_id_of(code)
+-            self.p_assert_operable(token_id)
+-            source = self.p_wallet(self.data.tokens[token_id].wallet)
++            token = self.p_assert_operable(token_id)
++            source = self.p_wallet(token.wallet)
+             assert source.type == "EXTERNAL_USER", "BIOID_BAD_TYPE"
+             if action == "consumed":
+                 consumed = self.p_do_consume(sp.record(token_id=token_id, amount=volume, external=True))
+@@ -901,16 +915,24 @@
+         def tube(self, code):
+             token_id = self.p_token_id_of(code)
+             token = self.data.tokens[token_id]
++            consent = token.consent_ref
++            outcome = self.data.outcomes.get_opt(token.root_id)
++            if token.root_id in self.data.anonymised:
++                consent = ""
++                outcome = sp.Some("anonymised")
+             return sp.record(
+                 token_id=token_id,
+                 balance=token.balance,
+                 wallet=token.wallet,
+                 parent_id=token.parent_id,
+                 root_id=token.root_id,
+-                status=token.status,
++                status=self.p_status(token_id),
+                 sample_type=token.sample_type,
+-                consent_ref=token.consent_ref,
++                consent_ref=consent,
+                 destroyed=token.destroyed,
++                outcome=outcome,
++                depth=self.data.depth.get(token_id, default=0),
++                owner=self.data.owners[token.root_id],
+             )
+ 
+         @sp.offchain_view()
+@@ -924,7 +946,7 @@
+             uris = []
+             current = token_id
+             done = False
+-            for _step in range(0, 8):
++            for _step in range(0, 8):  # MAX_GENERATIONS; transform enforces it
+                 if not done:
+                     for item in self.data.attachments[current]:
+                         uris.push(item.data_uri)
+@@ -941,7 +963,7 @@
+             found = False
+             current = token_id
+             done = False
+-            for _step in range(0, 8):
++            for _step in range(0, 8):  # MAX_GENERATIONS; transform enforces it
+                 if not done:
+                     for item in self.data.attachments[current]:
+                         if item.data_uri == param.uri:
+@@ -1720,3 +1742,96 @@
+         contract.withdraw(code="SY00000601", outcome="anonymise", _sender=owner)
+         contract.unfreeze_anonymised("SY00000601", _sender=owner)
+         contract.unfreeze_anonymised("SY00000601", _sender=owner, _valid=False, _exception="BIOID_FROZEN")
++
++    @sp.add_test()
++    def test_lifecycle():
++        # v0.4 lifecycle proposal: constant-cost withdrawal, stop_use escalation,
++        # owner rotation, explicit lineage depth.
++        scenario = sp.test_scenario("bioid_lifecycle")
++        contract = bioid.Bioid(admin.address, metadata())
++        scenario += contract
++        tube = sp.View(contract, "tube")
++        register_core(contract, admin)
++
++        # A root with a wide, deep lineage. Withdrawal writes once on the root.
++        mint(contract, "SY00000701", 5000, intake.address, lab)
++        contract.attach_data(code="SY00000701", data=data_of(
++            "https://example.org/synthetic/lifecycle/SY00000701", "intake", "metadata"), _sender=lab)
++        contract.move(code="SY00000701", to_wallet=aliq.address, reason="to_process", data=None, _sender=lab)
++        contract.transform(code="SY00000701", burn_ul=1000, added_ul=None, reason="aliquoted",
++            reason_utf8=utf8("aliquoted"), children=[
++                child("SY00000711", 200, "aliquot", aliq.address),
++                child("SY00000712", 200, "aliquot", aliq.address),
++                child("SY00000713", 200, "aliquot", freezer.address),
++                child("SY00000714", 200, "aliquot", freezer.address),
++                child("SY00000715", 200, "aliquot", freezer.address),
++            ], data=None, _sender=lab)
++        # Depth: generations 1..7 are allowed, an eighth derived generation is refused.
++        parent = "SY00000711"
++        volume = 200
++        for gen in range(2, 8):
++            code = "SY0000072" + str(gen)
++            volume = volume - 10
++            contract.transform(code=parent, burn_ul=volume + 5, added_ul=None, reason="aliquoted",
++                reason_utf8=utf8("aliquoted"), children=[child(code, volume, "aliquot", aliq.address)],
++                data=None, _sender=lab)
++            parent = code
++        scenario.verify(tube("SY00000727").depth == 7)
++        contract.transform(code="SY00000727", burn_ul=10, added_ul=None, reason="aliquoted",
++            reason_utf8=utf8("aliquoted"), children=[child("SY00000728", 10, "aliquot", aliq.address)],
++            data=None, _sender=lab, _valid=False, _exception="BIOID_DEPTH")
++        # The deepest allowed tube still sees the root dataset: the view is complete.
++        scenario.verify(sp.View(contract, "lineage_has")(sp.record(code="SY00000727",
++            uri="https://example.org/synthetic/lifecycle/SY00000701")))
++
++        # The withdrawal owner of a root is fixed at mint. In production it is an
++        # institutional multisig (for example TzSafe 2-of-3), so key rotation happens
++        # inside the multisig and needs no entrypoint here.
++        mint(contract, "SY00000801", 100, intake.address, lab)
++        scenario.verify(tube("SY00000715").owner == owner.address)
++        contract.withdraw(code="SY00000701", outcome="stop_use", _sender=lab,
++            _valid=False, _exception="BIOID_NOT_OWNER")
++
++        # stop_use freezes every descendant through the root, at constant cost.
++        contract.withdraw(code="SY00000701", outcome="stop_use", _sender=owner)
++        scenario.verify(tube("SY00000727").status == "stopped")
++        scenario.verify(tube("SY00000715").status == "stopped")
++        contract.move(code="SY00000715", to_wallet=other_freezer.address, reason="moved", data=None,
++            _sender=lab, _valid=False, _exception="BIOID_FROZEN")
++        contract.consume(code="SY00000712", amount=1, data=None, _sender=lab,
++            _valid=False, _exception="BIOID_FROZEN")
++        # Data can still be attached to a stopped tube (audit trail stays open).
++        contract.attach_data(code="SY00000713", data=data_of(
++            "https://example.org/synthetic/lifecycle/SY00000713", "storage", "qc"), _sender=lab)
++        # Escalation: stop_use -> destroy is allowed; repeating or relaxing is not.
++        contract.withdraw(code="SY00000701", outcome="stop_use", _sender=owner,
++            _valid=False, _exception="BIOID_FROZEN")
++        contract.confirm_destroyed("SY00000713", _sender=lab, _valid=False, _exception="BIOID_BAD_REASON")
++        contract.withdraw(code="SY00000701", outcome="destroy", _sender=owner)
++        scenario.verify(tube("SY00000727").status == "frozen")
++        contract.withdraw(code="SY00000701", outcome="anonymise", _sender=owner,
++            _valid=False, _exception="BIOID_FROZEN")
++        contract.confirm_destroyed("SY00000713", _sender=lab)
++        scenario.verify(tube("SY00000713").status == "destroyed")
++        scenario.verify(tube("SY00000713").balance == 0)
++        scenario.verify(tube("SY00000714").status == "frozen")
++
++        # Anonymise: consent_ref is hidden for the whole lineage, new children carry none.
++        contract.move(code="SY00000801", to_wallet=aliq.address, reason="to_process", data=None, _sender=lab)
++        contract.transform(code="SY00000801", burn_ul=50, added_ul=None, reason="split",
++            reason_utf8=utf8("split"), children=[child("SY00000811", 50, "aliquot", aliq.address)],
++            data=None, _sender=lab)
++        contract.withdraw(code="SY00000801", outcome="anonymise", _sender=owner)
++        scenario.verify(tube("SY00000811").status == "frozen")
++        contract.unfreeze_anonymised("SY00000801", _sender=owner)
++        scenario.verify(tube("SY00000811").status == "anonymised")
++        scenario.verify(tube("SY00000811").consent_ref == "")
++        contract.transform(code="SY00000811", burn_ul=20, added_ul=sp.Some(80), reason="dilution",
++            reason_utf8=utf8("dilution"), children=[child("SY00000821", 100, "diluted", aliq.address)],
++            data=None, _sender=lab)
++        scenario.verify(tube("SY00000821").consent_ref == "")
++        scenario.verify(tube("SY00000821").depth == 2)
++        # Anonymised is final: no further outcome.
++        contract.withdraw(code="SY00000801", outcome="destroy", _sender=owner,
++            _valid=False, _exception="BIOID_FROZEN")
++

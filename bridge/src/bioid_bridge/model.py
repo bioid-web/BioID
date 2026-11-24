@@ -71,6 +71,10 @@ class Operation:
     tube: str
     volume_uL: int | None = None
     burn_uL: int | None = None
+    # Liquid added during a transform (elution buffer, diluent). Derived from
+    # dilution_factor when the LIMS sends a factor instead of a volume.
+    added_uL: int | None = None
+    dilution_factor: float | None = None
     to_wallet: str | None = None
     from_wallet: str | None = None
     sample_type: str | None = None
@@ -82,6 +86,7 @@ class Operation:
     agreement_hash: str | None = None
     duo_codes: str | None = None
     request_event_id: str | None = None
+    occurred_at: str | None = None
 
 
 @dataclass

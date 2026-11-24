@@ -18,6 +18,8 @@ It is an open chain-of-custody and inventory layer beside a local LIMS. The LIMS
 
 A draft white paper for community feedback and potential adopters is in [`docs/whitepaper/BioID-whitepaper-v0.3.md`](docs/whitepaper/BioID-whitepaper-v0.3.md), with a [Word](docs/whitepaper/BioID-whitepaper-v0.3.docx) and [PDF](docs/whitepaper/BioID-whitepaper-v0.3.pdf) copy. It describes the design, reports a synthetic mainnet trial, and invites comment.
 
+The v0.4 draft, [`docs/whitepaper/BioID-whitepaper-v0.4-draft.md`](docs/whitepaper/BioID-whitepaper-v0.4-draft.md), describes the recipe as it stands in this repository, with the tested contract proposal in [`contracts/proposals/`](contracts/proposals/README.md). It keeps the mainnet trial as history. It is not published on Zenodo yet. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
+
 ## Core operating principles
 
 An ecosystem that adopts the recipe follows the [core operating principles](docs/principles.md). In short: no personal data on-chain, the ledger follows the physical tube, every holding wallet is registered and typed, and a hand-over between sites is a ship followed by a receive. Wallets should carry a readable Tezos Domains name.
