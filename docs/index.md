@@ -35,7 +35,8 @@ flowchart TB
 
 ## Read
 
-- [White paper v0.3](whitepaper/BioID-whitepaper-v0.3.md) — draft for community feedback and potential adopters ([Word](whitepaper/BioID-whitepaper-v0.3.docx), [PDF](whitepaper/BioID-whitepaper-v0.3.pdf))
+- [White paper v0.4 draft](whitepaper/BioID-whitepaper-v0.4-draft.md) — the recipe as it stands in this repository, with the v0.4 contract proposal ([changes](../CHANGELOG.md))
+- [White paper v0.3](whitepaper/BioID-whitepaper-v0.3.md) — published version, with the lean21 mainnet trial ([Word](whitepaper/BioID-whitepaper-v0.3.docx), [PDF](whitepaper/BioID-whitepaper-v0.3.pdf))
 
 - [Core operating principles](principles.md) — rules for an ecosystem that adopts the recipe
 - [Wallet types](wallet-types.md) — vocabulary, transition matrix, burns, and how a registry is anchored
@@ -44,6 +45,9 @@ flowchart TB
 - [Phone viewer](viewer.md) — static page that scans a tube code and reads volume, custody, lineage, and datasets
 - [Concept note](concept-note.md) — design, worked example, open questions ([PDF](pdf/concept-note.pdf))
 - [Argumentation](argumentation.md) — why an open chain-of-custody layer, with sources ([PDF](pdf/argumentation.pdf))
+- [Related work](related-work.md) — similar projects and standards, with checked links
+- [Threat model](threat-model.md) — what can go wrong, what limits it, and what remains
+- [Durability and pinning](durability.md) — how the record, the documents and the viewer outlive one host
 
 The notes on this site are the same Markdown files as in the repository. GitHub renders their Mermaid diagrams when you read the files there. This page loads Mermaid in the browser so the diagram above renders on GitHub Pages too.
 

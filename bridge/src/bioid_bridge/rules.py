@@ -37,6 +37,11 @@ _CONSERVING_REASONS = frozenset({"aliquoted", "split"})
 _ADDING_REASONS = frozenset({"rna_isolation", "dna_isolation", "dilution", "titration"})
 _ADDED_REQUIRED = frozenset({"dilution", "titration"})
 _WITHDRAW_OUTCOMES = frozenset({"destroy", "anonymise", "stop_use"})
+# stop_use may later be made stricter. Nothing else changes once recorded.
+_ESCALATIONS = frozenset({"destroy", "anonymise"})
+# Generations in one lineage, root included. Matches range(0, 8) in the contract's
+# lineage_uris and lineage_has views and the BIOID_DEPTH check in the v0.4 proposal.
+MAX_GENERATIONS = 8
 # Statuses in which custody, volume and access operations are refused. Mirrors
 # p_assert_operable in contracts/bioid_fa2.py. attach_data stays open, as in the contract.
 _NOT_OPERABLE = frozenset({"frozen", "stopped", "destroyed"})
@@ -83,12 +88,15 @@ def validate(op: Operation, token: dict | None, registry: Registry) -> None:
     if op.op == "withdraw":
         if token["parent_id"]:
             raise RuleViolation("withdraw is recorded on the root tube")
-        if token["status"] in _NOT_OPERABLE:
-            raise RuleViolation(f"{op.tube} is already {token['status']}")
-        if token.get("outcome"):
-            raise RuleViolation(f"{op.tube} already has a withdrawal outcome")
         if op.reason not in _WITHDRAW_OUTCOMES:
             raise RuleViolation(f"unknown withdrawal outcome {op.reason}")
+        previous = token.get("outcome")
+        escalation = previous == "stop_use" and op.reason in _ESCALATIONS
+        if previous and not escalation:
+            # Only stop_use may later be escalated to destroy or anonymise.
+            raise RuleViolation(f"{op.tube} already has a withdrawal outcome ({previous})")
+        if not escalation and token["status"] in _NOT_OPERABLE:
+            raise RuleViolation(f"{op.tube} is already {token['status']}")
         if not op.owner or op.owner != token["owner"]:
             raise RuleViolation("withdraw must be signed by the owner of the root tube")
         return
@@ -162,6 +170,14 @@ def validate(op: Operation, token: dict | None, registry: Registry) -> None:
             raise RuleViolation("burn exceeds balance")
         if not op.children:
             raise RuleViolation("transform mints at least one child")
+        if token.get("depth", 0) + 1 >= MAX_GENERATIONS:
+            # The contract's lineage views walk MAX_GENERATIONS tubes, root included.
+            # Refuse a deeper tube rather than let the views stop without saying so.
+            raise RuleViolation(
+                f"{op.tube} is generation {token.get('depth', 0)}; lineages stop at "
+                f"{MAX_GENERATIONS} generations (root included). Start a new root with a "
+                "recorded link instead"
+            )
         _same_place(op, token)
         for child in op.children:
             if child.volume_uL <= 0:

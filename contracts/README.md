@@ -36,7 +36,7 @@ Admin registers wallets and sets `active`. A custodian may update `label` and `m
 python3 contracts/bioid_fa2.py
 ```
 
-Two scenarios, `bioid_happy` and `bioid_rejections`, cover the reception-to-external-use path and the rejection codes. SmartPy writes Michelson next to the script, under `contracts/bioid_happy/` and `contracts/bioid_rejections/`. Those directories are gitignored.
+Two scenarios, `bioid_happy` and `bioid_rejections`, cover the reception-to-external-use path and the rejection codes. Proposed v0.4 changes (volume rules by transformation type, constant-cost withdrawal, stop-use escalation, explicit lineage depth) are tested patches in [`proposals/`](proposals/README.md). They are not applied here, so this file stays identical to the deployed Shadownet contract. SmartPy writes Michelson next to the script, under `contracts/bioid_happy/` and `contracts/bioid_rejections/`. Those directories are gitignored.
 
 ## Size
 

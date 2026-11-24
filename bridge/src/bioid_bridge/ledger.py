@@ -70,7 +70,9 @@ class MockLedger:
               volume_ul INTEGER,
               balance_after INTEGER,
               related_tube TEXT,
-              added_ul INTEGER
+              added_ul INTEGER,
+              occurred_at TEXT,
+              recorded_at TEXT
             );
             CREATE TABLE IF NOT EXISTS applied_events (
               event_id TEXT PRIMARY KEY,
@@ -114,6 +116,10 @@ class MockLedger:
         if "added_ul" not in columns:
             # Ledgers created before v0.4 lack the transform added-volume column.
             self.conn.execute("ALTER TABLE history ADD COLUMN added_ul INTEGER")
+        for column in ("occurred_at", "recorded_at"):
+            if column not in columns:
+                # v0.4: LIMS event time (optional) and ledger record time, for EPCIS export.
+                self.conn.execute(f"ALTER TABLE history ADD COLUMN {column} TEXT")
 
     def is_applied(self, event_id: str) -> bool:
         row = self.conn.execute(
@@ -130,7 +136,25 @@ class MockLedger:
             """,
             (tube,),
         ).fetchone()
-        return dict(row) if row else None
+        if not row:
+            return None
+        token = dict(row)
+        token["depth"] = self._depth(token)
+        return token
+
+    def _depth(self, token: dict) -> int:
+        """Generation of a tube: 0 for a root, parent's generation + 1 otherwise."""
+        depth = 0
+        seen = {token["tube"]}
+        parent = token.get("parent_id")
+        while parent and parent not in seen:
+            seen.add(parent)
+            depth += 1
+            row = self.conn.execute(
+                "SELECT parent_id FROM tokens WHERE tube = ?", (parent,)
+            ).fetchone()
+            parent = row["parent_id"] if row else None
+        return depth
 
     def history(self, tube: str) -> list[dict]:
         rows = self.conn.execute(
@@ -293,8 +317,8 @@ class MockLedger:
             """
             INSERT INTO history(
               event_id, batch_id, tube, op, reason, from_wallet, to_wallet,
-              volume_ul, balance_after, related_tube, added_ul
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              volume_ul, balance_after, related_tube, added_ul, occurred_at, recorded_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 op.event_id,
@@ -308,6 +332,8 @@ class MockLedger:
                 balance_after,
                 related_tube,
                 op.added_uL if op_name == "transform" and tube == op.tube else None,
+                op.occurred_at,
+                _now(),
             ),
         )
 
@@ -429,13 +455,21 @@ class MockLedger:
         return [dict(row) for row in rows]
 
     def _withdraw(self, op: Operation, batch_id: str, token: dict | None) -> None:
-        """Freeze the whole lineage of the root tube, wherever each tube sits."""
+        """Freeze the whole lineage of the root tube, wherever each tube sits.
+
+        A stop_use may later be escalated to destroy or anonymise (rules.validate
+        allows nothing else); the outcome row is then replaced and the lineage frozen.
+        Destroyed tubes stay destroyed.
+        """
         assert token is not None
         status = "stopped" if op.reason == "stop_use" else "frozen"
         self.conn.execute(
-            "INSERT INTO outcomes(root_id, outcome) VALUES (?, ?)", (token["root_id"], op.reason)
+            "INSERT OR REPLACE INTO outcomes(root_id, outcome) VALUES (?, ?)",
+            (token["root_id"], op.reason),
         )
         for member in self._lineage_members(token["root_id"]):
+            if member["status"] == "destroyed":
+                continue
             self.conn.execute(
                 "UPDATE tokens SET status = ? WHERE tube = ?", (status, member["tube"])
             )

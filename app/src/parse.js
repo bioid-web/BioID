@@ -19,6 +19,25 @@ export const EVENT_LABELS = {
 
 const LINEAGE_TAGS = new Set(["WITHDRAW", "UNFREEZE"]);
 
+// v0.4 contract proposal: a withdrawal is written once on the root and descendants
+// keep their stored status. The effective status comes from the root's WITHDRAW and
+// UNFREEZE events. On the v0.3 contract stored statuses already say "frozen", so the
+// result is the same.
+export function effectiveStatus(token, rootCode, events) {
+  if (token.destroyed || token.status === "destroyed") return "destroyed";
+  let outcome = null;
+  for (const event of events || []) {
+    const payload = (event && event.payload) || {};
+    if (payload.root !== rootCode) continue;
+    if (event.tag === "WITHDRAW" && payload.outcome) outcome = payload.outcome;
+    if (event.tag === "UNFREEZE") outcome = "anonymised";
+  }
+  if (outcome === "stop_use") return "stopped";
+  if (outcome === "destroy" || outcome === "anonymise") return "frozen";
+  if (outcome === "anonymised") return "anonymised";
+  return token.status;
+}
+
 export function bigmapPointer(storage, name) {
   const value = storage ? storage[name] : undefined;
   if (typeof value === "number" || typeof value === "string") return String(value);
@@ -162,6 +181,7 @@ export function viewToken(tokenId, indexes) {
   children.sort((a, b) => Number(a.id) - Number(b.id));
   const rootRow = tokens.get(token.rootId);
   const rootCode = (rootRow && rootRow.code) || token.code;
+  token.status = effectiveStatus(token, rootCode, indexes.events);
   return {
     token,
     wallet: describeWallet(token.wallet, indexes.wallets),
@@ -240,6 +260,8 @@ export function summarizeEvent(event, wallets) {
   if (payload.volume != null) parts.push(`${payload.volume} µL`);
   if (payload.amount != null) parts.push(`${payload.amount} µL`);
   if (payload.burned != null) parts.push(`burned ${payload.burned} µL`);
+  if (payload.added != null && payload.added !== "") parts.push(`added ${payload.added} µL`);
+  if (event.tag === "WITHDRAW" && payload.previous) parts.push(`was ${String(payload.previous).replaceAll("_", " ")}`);
   if (payload.balance != null) parts.push(`balance ${payload.balance} µL`);
   if (payload.to_) parts.push(`to ${walletName(payload.to_, wallets)}`);
   if (payload.parent && event.tag === "MINT") parts.push(`from ${payload.parent}`);

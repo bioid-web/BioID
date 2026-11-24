@@ -61,7 +61,7 @@ The footer keeps the mainnet tip link for [`bioid.tez`](https://tzkt.io/tz1Tm5dr
 Parser and lineage tests use the recorded TzKT fixtures in [`fixtures/shadownet/`](fixtures/shadownet/README.md). They do not touch the network.
 
 ```bash
-node --test test/parse.test.mjs test/labels.test.mjs
+npm test
 ```
 
 A headless browser smoke test loads the page and reads the live Shadownet contract:

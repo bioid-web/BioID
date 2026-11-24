@@ -153,6 +153,7 @@ def translate(event: dict, mapping: Mapping) -> Operation:
     agreement_hash = event.get("agreement_hash")
     duo_codes = event.get("duo_codes")
     request_event_id = event.get("request_event_id")
+    occurred_at = event.get("occurred_at")
     return Operation(
         event_id=event_id,
         op=op_name,
@@ -173,6 +174,7 @@ def translate(event: dict, mapping: Mapping) -> Operation:
         agreement_hash=agreement_hash if isinstance(agreement_hash, str) else None,
         duo_codes=duo_codes if isinstance(duo_codes, str) else None,
         request_event_id=request_event_id if isinstance(request_event_id, str) else None,
+        occurred_at=occurred_at if isinstance(occurred_at, str) else None,
     )
 
 

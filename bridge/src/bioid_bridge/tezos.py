@@ -25,6 +25,10 @@ _MAINNET_MARKERS = (
 )
 _SECRET_PREFIXES = ("edsk", "spsk", "p2sk", "edesk")
 _SHADOW_RPC = "https://rpc.shadownet.teztnets.com"
+# "v0.3" is the contract in contracts/bioid_fa2.py (deployed on Shadownet).
+# "v0.4" is the tested proposal in contracts/proposals/ (transform takes added_ul).
+# Use it only against a testnet origination of the proposal.
+CONTRACT_VERSIONS = ("v0.3", "v0.4")
 
 
 class TezosBackend:
@@ -43,12 +47,14 @@ class TezosBackend:
         key_ref: str,
         network: str,
         registry: Registry | None = None,
+        contract_version: str = "v0.3",
     ):
         self.rpc_url = rpc_url.strip()
         self.contract = contract.strip()
         self.key_ref = key_ref.strip()
         self.network = network.strip()
         self.registry = registry
+        self.contract_version = (contract_version or "v0.3").strip()
         self._guard()
 
     @classmethod
@@ -64,9 +70,14 @@ class TezosBackend:
             key_ref=source.get("TEZOS_KEY_REF", ""),
             network=source.get("TEZOS_NETWORK", ""),
             registry=registry,
+            contract_version=source.get("TEZOS_CONTRACT_VERSION", "v0.3"),
         )
 
     def _guard(self) -> None:
+        if self.contract_version not in CONTRACT_VERSIONS:
+            raise ConfigError(
+                f"TEZOS_CONTRACT_VERSION must be one of {', '.join(CONTRACT_VERSIONS)}"
+            )
         network = self.network.lower()
         rpc = self.rpc_url.lower()
         if network == "mainnet" or any(marker in rpc for marker in _MAINNET_MARKERS):
@@ -159,7 +170,7 @@ class TezosBackend:
                 "data": _data(op),
             }
         if op.op == "transform":
-            return "transform", {
+            parameter = {
                 "code": op.tube,
                 "burn_ul": op.burn_uL,
                 "reason": op.reason,
@@ -174,6 +185,10 @@ class TezosBackend:
                 ],
                 "data": _data(op),
             }
+            if self.contract_version == "v0.4":
+                # Proposal signature: added_ul : option nat (None for aliquot/split).
+                parameter["added_ul"] = op.added_uL
+            return "transform", parameter
         if op.op == "burn" and op.reason == "consumed":
             if self._source_type(op) == "EXTERNAL_USER":
                 return "report_use", {

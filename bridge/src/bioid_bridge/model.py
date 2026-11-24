@@ -86,6 +86,7 @@ class Operation:
     agreement_hash: str | None = None
     duo_codes: str | None = None
     request_event_id: str | None = None
+    occurred_at: str | None = None
 
 
 @dataclass
