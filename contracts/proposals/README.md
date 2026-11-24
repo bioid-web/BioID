@@ -45,6 +45,21 @@ With a 64-byte signature, the full proposal is about 32,609 bytes, about 160 byt
 - Shorter error strings (`B_` instead of `BIOID_`) save about 430 bytes.
 - Attaching data only through `attach_data`, batched in the same operation group, would remove one inlined copy of the attachment code from each custody entrypoint. Not measured yet.
 
-Confirm the size with a dry-run origination on a testnet before adopting.
+**Shadownet dry run, 24 November 2026.** Nothing was injected and no tez was spent. The full proposal (integrity + lifecycle) was simulated with `octez-client originate … --dry-run --verbose-signing` against `https://rpc.shadownet.teztnets.com`, using an existing Shadownet test account. The protocol limit (`max_operation_data_length`) is 32,768 bytes.
+
+| Measure | Value |
+|---|---|
+| Operation bytes, unsigned (branch + contents) | 32,548 |
+| With 64-byte signature | 32,612 (156 bytes under the limit) |
+| Estimated gas | 80,717 units (limit per operation 1,040,000) |
+| Storage size | 33,004 bytes (limit per operation 60,000) |
+| Estimated cost | about 8.36 tez: 8.251 storage burn, 0.064 allocation, 0.041 fee |
+
+The simulation succeeded, so the proposal fits. The node checks the size limit at injection, which was not done, so that check was made against the measured bytes above.
+
+### Decisions (24 November 2026)
+
+- **No `rotate_owner`.** The withdrawal owner is an institutional multisig, and its keys rotate inside the multisig. Moving the owner role to another institution is not supported in v0.4.
+- **Freeing spare bytes is deferred to a later upgrade.** Before any new entrypoint is added, space must be freed first, for example with shorter error strings (about 430 bytes).
 
 Signature change: `transform` gains `added_ul`. The bridge `TezosBackend` encodes it when `TEZOS_CONTRACT_VERSION=v0.4`. The viewer shows `added` in the timeline and derives the effective status from the root's `WITHDRAW` and `UNFREEZE` events, so it reads both contract versions.

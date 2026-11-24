@@ -20,7 +20,7 @@ Work from the v0.4 improvement sprint, 23–24 November 2026. Every sample, tube
   - An explicit 8-generation lineage limit (`BIOID_DEPTH`).
   - The `tube` view returns the effective status, outcome, depth and owner.
   - New scenario: `bioid_lifecycle`.
-- Owner key rotation: the owner should be an institutional multisig (for example TzSafe). A `rotate_owner` entrypoint was written and tested, then removed to stay under the 32,768-byte operation limit. Sizes are in `contracts/proposals/README.md`.
+- Owner key rotation: the owner should be an institutional multisig (for example TzSafe). A `rotate_owner` entrypoint was written and tested, then removed to stay under the 32,768-byte operation limit. Sizes are in `contracts/proposals/README.md`. A Shadownet dry run (not injected) measured 32,612 signed bytes, 156 under the limit, with about 80.7k gas and 33,004 bytes of storage. Decided: a multisig owner without `rotate_owner`, and freeing spare bytes deferred to a later upgrade.
 
 ### Bridge
 

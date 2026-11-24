@@ -218,7 +218,7 @@ A fuller survey, with a positioning table and checked links, is in the repositor
 
 **Future work (not implemented).**
 
-- **Testnet origination of the v0.4 proposal.** The proposal's origination operation measures about 32.6 KB, close to the 32 KB (32,768-byte) limit. It must be confirmed with a dry run on a testnet before adoption. Further features will need space to be freed first.
+- **Testnet origination of the v0.4 proposal.** A dry run on Shadownet (simulated, not sent) measured the origination at 32,612 bytes including the signature, 156 bytes under the 32,768-byte limit. Further features will need space to be freed first, which is planned for a later upgrade.
 - **Encrypted, versioned data files.** Large result files, including DNA data, would be stored encrypted off-chain on IPFS or institutional storage. Only references, fingerprints and version numbers would go on-chain, so the chain proves that a given version existed without exposing it. Storage would be chosen for cost, durability and jurisdiction, not limited by blockchain size.
 - **Key management.** This means implementing the custodian and admin key model in Section 3.4 in a signing service, including rotation, freezing and staff turnover, and setting up the owner multisig.
 - **Running the durability plan.** Assign the pinning, export and verification roles in Section 3.10 to named teams, and run the first quarterly export.
