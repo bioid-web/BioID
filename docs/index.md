@@ -35,8 +35,8 @@ flowchart TB
 
 ## Read
 
-- [White paper v0.4 draft](whitepaper/BioID-whitepaper-v0.4-draft.md) — the recipe as it stands in this repository, with the v0.4 contract proposal ([changes](../CHANGELOG.md))
-- [White paper v0.3](whitepaper/BioID-whitepaper-v0.3.md) — published version, with the lean21 mainnet trial ([Word](whitepaper/BioID-whitepaper-v0.3.docx), [PDF](whitepaper/BioID-whitepaper-v0.3.pdf))
+- [White paper v0.4](whitepaper/BioID-whitepaper-v0.4.md) — published version, with the v0.4 contract proposal ([Word](whitepaper/BioID-whitepaper-v0.4.docx), [PDF](whitepaper/BioID-whitepaper-v0.4.pdf); Zenodo DOI [10.5281/zenodo.24493819](https://doi.org/10.5281/zenodo.24493819)). Changes are listed in the [changelog](../CHANGELOG.md).
+- [White paper v0.3](whitepaper/BioID-whitepaper-v0.3.md) — previous published version, with the lean21 mainnet trial ([Word](whitepaper/BioID-whitepaper-v0.3.docx), [PDF](whitepaper/BioID-whitepaper-v0.3.pdf); Zenodo DOI [10.5281/zenodo.24321810](https://doi.org/10.5281/zenodo.24321810))
 
 - [Core operating principles](principles.md) — rules for an ecosystem that adopts the recipe
 - [Wallet types](wallet-types.md) — vocabulary, transition matrix, burns, and how a registry is anchored

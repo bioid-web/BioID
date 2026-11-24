@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24321809.svg)](https://doi.org/10.5281/zenodo.24321809)
 
-White paper v0.3 on Zenodo: [doi.org/10.5281/zenodo.24321809](https://doi.org/10.5281/zenodo.24321809)
+White paper v0.4 on Zenodo: [doi.org/10.5281/zenodo.24493819](https://doi.org/10.5281/zenodo.24493819) (version DOI). The [concept DOI](https://doi.org/10.5281/zenodo.24321809) always resolves to the latest version.
 
 Open recipe for tamper-evident biobank sample provenance, custody and access on the Tezos blockchain.
 
@@ -16,9 +16,9 @@ It is an open chain-of-custody and inventory layer beside a local LIMS. The LIMS
 
 ## White paper
 
-A draft white paper for community feedback and potential adopters is in [`docs/whitepaper/BioID-whitepaper-v0.3.md`](docs/whitepaper/BioID-whitepaper-v0.3.md), with a [Word](docs/whitepaper/BioID-whitepaper-v0.3.docx) and [PDF](docs/whitepaper/BioID-whitepaper-v0.3.pdf) copy. It describes the design, reports a synthetic mainnet trial, and invites comment.
+The current white paper is [`docs/whitepaper/BioID-whitepaper-v0.4.md`](docs/whitepaper/BioID-whitepaper-v0.4.md), with a [Word](docs/whitepaper/BioID-whitepaper-v0.4.docx) and [PDF](docs/whitepaper/BioID-whitepaper-v0.4.pdf) copy. It is published on Zenodo as version 0.4, DOI [10.5281/zenodo.24493819](https://doi.org/10.5281/zenodo.24493819). It describes the recipe as it stands in this repository, with the tested contract proposal in [`contracts/proposals/`](contracts/proposals/README.md). It keeps the mainnet trial as history. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
 
-The v0.4 draft, [`docs/whitepaper/BioID-whitepaper-v0.4-draft.md`](docs/whitepaper/BioID-whitepaper-v0.4-draft.md), describes the recipe as it stands in this repository, with the tested contract proposal in [`contracts/proposals/`](contracts/proposals/README.md). It keeps the mainnet trial as history. It is not published on Zenodo yet. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
+The previous published version, v0.3, is in [`docs/whitepaper/BioID-whitepaper-v0.3.md`](docs/whitepaper/BioID-whitepaper-v0.3.md), with a [Word](docs/whitepaper/BioID-whitepaper-v0.3.docx) and [PDF](docs/whitepaper/BioID-whitepaper-v0.3.pdf) copy (Zenodo: [10.5281/zenodo.24321810](https://doi.org/10.5281/zenodo.24321810)).
 
 ## Core operating principles
 
