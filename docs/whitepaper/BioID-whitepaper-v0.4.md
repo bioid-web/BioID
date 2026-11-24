@@ -1,8 +1,10 @@
 # BioID: Tamper-Evident Provenance, Consent and Distributed Stewardship for Biobank Samples on Tezos
 
-**A white paper by the BioID project (bioid-web), version 0.4 (draft, 24 November 2026)**
+**A white paper by the BioID project (bioid-web), version 0.4, 24 November 2026**
 
-*Draft for community feedback and potential adopters, November 2026. All sample, volunteer and wallet data described here is synthetic.*
+*For community feedback and potential adopters, 24 November 2026. All sample, volunteer and wallet data described here is synthetic.*
+
+**How to cite.** BioID project (bioid-web). *BioID: Tamper-Evident Provenance, Consent and Distributed Stewardship for Biobank Samples on Tezos.* Version 0.4, 24 November 2026. https://doi.org/10.5281/zenodo.24321809 (concept DOI; always resolves to the latest version).
 
 ## 1. Abstract
 
@@ -44,7 +46,7 @@ BioID does not replace anything a biobank already uses. Field sheets, binders, s
 
 A single FA2 contract holds one token per physical tube. On the tube, the token is identified by a printed alphanumeric code that carries no personal meaning; on-chain, by a token id. The repository's synthetic examples use SY-prefixed codes. The mainnet trial used its own prefix (Section 4).
 
-The balance is the volume in microlitres, so consuming material lowers the balance, and a tube that is used up stays on record at 0 µL. Splits and processing mint child tokens with a parent link, so the family tree of any tube can be rebuilt from public chain data alone. A lineage has at most eight generations, root included. The bridge refuses a ninth, and so does the v0.4 contract proposal in the repository (`contracts/proposals/`), so every lineage query is complete. The deployed contract's lineage views already stop at eight.
+The balance is the volume in microlitres, so consuming material lowers the balance, and a tube that is used up stays on record at 0 µL. Splits and processing mint child tokens with a parent link, so the family tree of any tube can be rebuilt from public chain data alone. A lineage has at most eight generations, root included. The bridge refuses a ninth, and so does the v0.4 contract proposal in the repository, so every lineage query is complete. The deployed contract's lineage views already stop at eight.
 
 Each holding wallet is registered with one of six types: `STORAGE`, `INTAKE`, `PROCESS`, `TRANSIT`, `QUARANTINE` and `EXTERNAL_USER`. The contract enforces which operations each type allows. Only a `PROCESS` wallet can transform a tube, a tube leaves a site only through a `TRANSIT` wallet, and a tube never goes straight from one site's freezer to another's. A hand-over between sites takes two signatures. The sender ships the tube into transit, and only the receiving custodian can receive it into one of their own wallets. A move of the same physical tube is a transfer of the same token, never a burn and re-mint, so the token's history is the tube's journey. The FA2 `transfer` entrypoint is disabled; custody moves only through these typed entrypoints, each with a reason code.
 
@@ -77,7 +79,7 @@ Because a token's balance is the volume in its tube, the record must not let vol
 
 Every transformation therefore leaves three numbers in the public record: what kind of step it was, how much source material it consumed, and, where liquid was added, how much. A reader can then check mass balance of the *source* across a whole lineage, even though liquid volumes grow and shrink along the way. Volume corrections after a measurement are a separate, visible step; evaporation or dead-volume corrections can only lower a volume.
 
-**Status.** The bridge enforces these rules, and its tests cover each case. The matching contract change is compiled and tested in SmartPy as a proposal in the repository (`contracts/proposals/`). It has not been originated anywhere yet. It will be tested on a testnet first. The lean21 mainnet contract is not re-originated.
+**Status.** The bridge enforces these rules, and its tests cover each case. The matching contract change is compiled and tested in SmartPy as a proposal in the repository. It has not been originated anywhere yet. It will be tested on a testnet first. The lean21 mainnet contract is not re-originated.
 
 ### 3.3 Wallets, events and destruction (implemented)
 
@@ -128,7 +130,7 @@ The viewer brands itself "bioid lean trial". Some trial tube codes are omitted f
 
 ### 3.9 Threat model
 
-The chain proves that a record was made, by which key, when, and in what order. It does not prove that a tube is in a freezer. BioID's guarantees and limits follow from that. The full threat model, with eighteen threats, the mitigation for each, its status and what risk remains, is in the repository (`docs/threat-model.md`). In summary:
+The chain proves that a record was made, by which key, when, and in what order. It does not prove that a tube is in a freezer. BioID's guarantees and limits follow from that. The full threat model, with eighteen threats, the mitigation for each, its status and what risk remains, is published with the repository. In summary:
 
 - **What the chain protects against.** Silent editing or deletion of history after the fact; back-dating; one party quietly rewriting a shared record; loss of the record when an institution's systems fail or close; volume appearing from nowhere through transformation records (Section 3.2a); a withdrawal that misses a derived tube or cannot be afforded for a large lineage (Section 3.6).
 - **What it does not protect against.** A custodian who records an event that did not happen, or omits one that did (garbage in, permanent garbage); a stolen or misused key until it is replaced; collusion between the parties that order and attest; mislabelled tubes at the bench; loss of every owner key, which cannot be recovered on-chain by design.
@@ -138,7 +140,7 @@ The chain proves that a record was made, by which key, when, and in what order. 
 
 ### 3.10 Durability (plan)
 
-A record that is meant to outlast its institution needs more than the chain. The repository's durability plan (`docs/durability.md`) assigns each part a keeper. Contract and token metadata are pinned on at least two independent pinning services and on one institutional IPFS node. Each quarter, contract storage, all big-map keys and all events are exported with checksums and deposited in a long-term repository, so history can be checked even if today's indexers disappear. The source code is archived in Software Heritage and released with a DOI. Salts are kept as durably as the documents they protect. The off-chain link from tube to donor is deliberately not durable beyond its legal purpose, because deleting it is how anonymisation works. The plan also sets a schedule for re-verifying the record against the chain. It is a plan, not yet a running service.
+A record that is meant to outlast its institution needs more than the chain. The repository's durability plan assigns each part a keeper. Contract and token metadata are pinned on at least two independent pinning services and on one institutional IPFS node. Each quarter, contract storage, all big-map keys and all events are exported with checksums and deposited in a long-term repository, so history can be checked even if today's indexers disappear. The source code is archived in Software Heritage and released with a DOI. Salts are kept as durably as the documents they protect. The off-chain link from tube to donor is deliberately not durable beyond its legal purpose, because deleting it is how anonymisation works. The plan also sets a schedule for re-verifying the record against the chain. It is a plan, not yet a running service.
 
 ### 3.11 Keeping metadata hidden (design, not implemented)
 
@@ -192,7 +194,7 @@ The concept described here is chain-agnostic in principle. Apart from Tezos-spec
 
 ## 5a. Related work
 
-A fuller survey, with a positioning table and checked links, is in the repository (`docs/related-work.md`). The closest work falls into four groups.
+A fuller survey, with a positioning table and checked links, is published with the repository. The closest work falls into four groups.
 
 **Consent on a ledger.**
 
