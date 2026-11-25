@@ -82,6 +82,8 @@ The feed above has been replayed on the Tezos **Shadownet testnet** (chain id `N
 
 Contract: [`KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix`](https://shadownet.tzkt.io/KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix) (origination [`onssPPtP…`](https://shadownet.tzkt.io/onssPPtPBAQoPEf9PQxFJmCfmnGPzXA4xgvSSxHHc3fqmyihPEW)).
 
+A later Shadownet custody prototype, originated from the same contract source for the Android ship/receive path, is recorded in [`deployments/shadownet-custody.json`](deployments/shadownet-custody.json) as [`KT1B2i1w9CjbcUHrGJSPqYRmFiLJa8pXneJ5`](https://shadownet.tzkt.io/KT1B2i1w9CjbcUHrGJSPqYRmFiLJa8pXneJ5). It also holds only synthetic tubes. It does not replace this public demo.
+
 | Label | Type | Shadownet address | Label only, not a registered name |
 |---|---|---|---|
 | `SYN-PILOT-RECEPTION` | INTAKE | [`tz1P2Gdj…PAxM`](https://shadownet.tzkt.io/tz1P2GdjP5jLPeCLbsMoTibVLBEBViV8PAxM) | `reception.pilot.example.tez` |

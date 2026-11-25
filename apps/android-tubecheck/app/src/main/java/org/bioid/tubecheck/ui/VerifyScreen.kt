@@ -186,7 +186,7 @@ private fun NetworkPicker(current: Network, onSelect: (Network) -> Unit) {
             DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
                 BioIdConfig.NETWORKS.forEach { network ->
                     DropdownMenuItem(
-                        text = { Text(network.label + if (network.id == "mainnet") " (opt-in)" else " (default)") },
+                        text = { Text(network.label + when { network.id == BioIdConfig.DEFAULT.id -> " (default)"; network.id == "mainnet" -> " (opt-in)"; else -> "" }) },
                         onClick = {
                             open = false
                             onSelect(network)

@@ -11,6 +11,7 @@ dev = ["pytest>=7.4"]
 
 [project.scripts]
 bioid-bridge = "bioid_bridge.cli:main"
+bioid-signing = "bioid_bridge.signing_http:main"
 
 [build-system]
 requires = ["setuptools>=68"]

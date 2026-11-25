@@ -12,6 +12,8 @@ val Amber = Color(0xFFB45309)
 val AmberBg = Color(0xFFFEF3C7)
 val Rose = Color(0xFF9F1239)
 val RoseBg = Color(0xFFFFE4E6)
+val Green = Color(0xFF065F46)
+val GreenBg = Color(0xFFD1FAE5)
 
 private val Colors = lightColorScheme(
     primary = Teal,

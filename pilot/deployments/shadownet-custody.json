@@ -1,0 +1,123 @@
+{
+  "notice": "SYNTHETIC custody prototype on the Tezos Shadownet TESTNET. Throwaway testnet addresses; no real tubes, people, sites or accounts. Keys and bearer tokens are not in this repository. Never reuse these addresses or this file on mainnet.",
+  "network": "shadownet",
+  "chain_id": "NetXsqzbfFenSTS",
+  "rpc": "https://rpc.shadownet.teztnets.com",
+  "explorer": "https://shadownet.tzkt.io",
+  "tzkt_api": "https://api.shadownet.tzkt.io/v1",
+  "contract": {
+    "address": "KT1B2i1w9CjbcUHrGJSPqYRmFiLJa8pXneJ5",
+    "tzkt": "https://shadownet.tzkt.io/KT1B2i1w9CjbcUHrGJSPqYRmFiLJa8pXneJ5",
+    "origination": "oovFVQthFWprNkfXn6Ni2eHwJT67NdxzHWvQwR7DQFG4pcNoanH",
+    "source": "contracts/bioid_fa2.py",
+    "compiler": "smartpy-tezos 0.24.2",
+    "note": "Originated from the contract on main at 8e884c9. The v0.4 proposal patches were not applied."
+  },
+  "admin": {
+    "label": "bioid-admin",
+    "address": "tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch",
+    "tzkt": "https://shadownet.tzkt.io/tz1hFmJ2xbV6HPk84iYwJ8gv1suKDxsGYsch"
+  },
+  "custodians": [
+    {
+      "label": "field-custodian",
+      "address": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F",
+      "site": "field",
+      "tzkt": "https://shadownet.tzkt.io/tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F"
+    },
+    {
+      "label": "transit-custodian",
+      "address": "tz1ew1YTaVQpQv9M2Pj2cgj729z8QqFzJCWT",
+      "site": "courier",
+      "tzkt": "https://shadownet.tzkt.io/tz1ew1YTaVQpQv9M2Pj2cgj729z8QqFzJCWT"
+    },
+    {
+      "label": "lab-custodian",
+      "address": "tz1cL4AwPrqMcp2CWYC3g4g6NBnktPbLBeS2",
+      "site": "lab",
+      "tzkt": "https://shadownet.tzkt.io/tz1cL4AwPrqMcp2CWYC3g4g6NBnktPbLBeS2"
+    }
+  ],
+  "wallets": [
+    {
+      "label": "Field intake (synthetic)",
+      "address": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F",
+      "type": "INTAKE",
+      "site": "field",
+      "custodian": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F",
+      "register_op": "onedH8LPWYjrtgXoF8WZYYhkdxM8qDbRyV7NorLbCNGAMki2JLX"
+    },
+    {
+      "label": "Courier (synthetic)",
+      "address": "tz1ew1YTaVQpQv9M2Pj2cgj729z8QqFzJCWT",
+      "type": "TRANSIT",
+      "site": "courier",
+      "custodian": "tz1ew1YTaVQpQv9M2Pj2cgj729z8QqFzJCWT",
+      "register_op": "onusQBLPzFhD2ka6bsgMHrjKncP237ahPfKHmPawSRN8j7XfKjF"
+    },
+    {
+      "label": "Lab freezer (synthetic)",
+      "address": "tz1cL4AwPrqMcp2CWYC3g4g6NBnktPbLBeS2",
+      "type": "STORAGE",
+      "site": "lab",
+      "custodian": "tz1cL4AwPrqMcp2CWYC3g4g6NBnktPbLBeS2",
+      "register_op": "opFACUwd61P9E11egnerRUaubQvD2XBgQcBDWMYj9V4YrW4n4Zo"
+    },
+    {
+      "label": "Lab quarantine (synthetic)",
+      "address": "tz1XgNN3LoMgK7WWE6Lk2h35KD4nQy8CLbcR",
+      "type": "QUARANTINE",
+      "site": "lab",
+      "custodian": "tz1cL4AwPrqMcp2CWYC3g4g6NBnktPbLBeS2",
+      "register_op": "oonajyVN8PbtNW7FHTew36NZNfWsCB84BxWtDSxFX4EVKCmgaZG"
+    }
+  ],
+  "funding": {
+    "field": "ooNcbeKtwztbFvaUpYV6ccdXg9cGNk6Jrdv3hoyJzfUPd3cRm2X",
+    "transit": "onuVzsDSPtgqrE1bTtBGtgEB4jhZCJKYqqNDAQWkQDNPTiEvrtq",
+    "lab": "ookyubP73prNTZW6dNJiZtF6DeVhVPTsMxJXkLN2chPBTnerkaT",
+    "note": "Testnet tez only, transferred from the existing Shadownet admin balance. No faucet was used. No mainnet spend."
+  },
+  "tubes": [
+    {
+      "code": "SY00000401",
+      "mint_op": "opD41DCcGRTCYf6F5juP2oZzqWdCYLwmu3aokS1WybACeiCiTxH",
+      "sample_type": "blood",
+      "volume_ul": 1000,
+      "minted_into": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F"
+    },
+    {
+      "code": "SY00000402",
+      "mint_op": "oofCCKJnPURfQ3En2di3VkZUPj5jc6KbP2vHTcXmxNyrH9w1Dh6",
+      "sample_type": "blood",
+      "volume_ul": 1000,
+      "minted_into": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F"
+    },
+    {
+      "code": "SY00000403",
+      "mint_op": "ootRUYyTWKvNEwiWb8G1c1KRsmFDvVsrxeBDaU3kZwwP72J22hM",
+      "sample_type": "blood",
+      "volume_ul": 1000,
+      "minted_into": "tz1TCvD465fjpgL7T6dG1nWqxUQntCUipG3F"
+    }
+  ],
+  "e2e": {
+    "tube": "SY00000401",
+    "ship_op": "ooBuXdyJraAoZoXQE4XfuUGT8E5r7uEypspQiE7XAox3AYyKCXp",
+    "ship_tzkt": "https://shadownet.tzkt.io/ooBuXdyJraAoZoXQE4XfuUGT8E5r7uEypspQiE7XAox3AYyKCXp",
+    "receive_op": "oomaAauBXQwhqQd9VwibdJt2scuV1vg6EmGCnsXr9Pn2oLEs5Ti",
+    "receive_tzkt": "https://shadownet.tzkt.io/oomaAauBXQwhqQd9VwibdJt2scuV1vg6EmGCnsXr9Pn2oLEs5Ti",
+    "note": "Shipped field intake to courier, then received into the lab freezer, through the signing HTTP front. TzKT recorded SHIP (reason shipped) and RECEIVE (reason received). All synthetic."
+  },
+  "signing_service": {
+    "bind": "127.0.0.1",
+    "port": 8787,
+    "config": "outside this repository; the service refuses any network other than Shadownet"
+  },
+  "tez_used_testnet": {
+    "consumed_tez": "9.354787",
+    "baker_fees_tez": "0.055787",
+    "storage_and_allocation_tez": "9.299000",
+    "note": "Fees and burns only, testnet tez from the existing admin balance. Internal 1.5 tez allocations to the three custodians are not counted as consumed. No faucet. No mainnet spend."
+  }
+}

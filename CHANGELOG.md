@@ -4,12 +4,12 @@ All notable changes to this repository. Code is MIT, documentation CC BY 4.0.
 
 ## Unreleased
 
-### Android prototype
+### Android prototype and Shadownet custody signing
 
 - New `apps/android-tubecheck/`: an Android (Kotlin, Jetpack Compose) prototype that scans a tube and reads it through TzKT using the same per-tube mapping as the web viewer (`code_index`, `tokens`, `wallet_registry`, contract events, effective withdrawal status).
-- Shadownet is the default network. The mainnet trial contract is an explicit opt-in and still holds only synthetic data.
-- Ship and receive tabs are labelled previews. There is no signing backend and the phone holds no key. A planned HTTP front over the existing Python bridge is described in `docs/android-tubecheck.md`.
-- JVM unit tests cover scan parsing, effective status and fixture-based timeline mapping.
+- The default Verify network is the Shadownet custody prototype `KT1B2i1w9CjbcUHrGJSPqYRmFiLJa8pXneJ5` (synthetic data). The earlier public demo contract and the mainnet trial contract remain selectable; the mainnet trial is still an explicit opt-in and still holds only synthetic data.
+- Ship and receive talk to a thin, Shadownet-only HTTP front (`bioid_bridge.signing_http`) when a service URL and bearer token are entered in Settings. The phone holds no key. The service refuses any network other than Shadownet, signs with testnet octez aliases, and returns an operation hash. Without Settings the tabs stay a labelled preview.
+- JVM unit tests cover scan parsing, effective status, fixture-based timeline mapping, and the custody request/response JSON.
 
 ## v0.4 (24 November 2026)
 

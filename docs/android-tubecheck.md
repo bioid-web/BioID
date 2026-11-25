@@ -5,22 +5,39 @@ title: Android Tube Check
 
 # Android Tube Check
 
-The Android prototype lives in [`apps/android-tubecheck/`](../apps/android-tubecheck/README.md). **Verify** is a native read of the public TzKT index, using the same per-tube mapping as the [phone viewer](viewer.md). **Ship and receive are not connected.** The supported phone viewer remains the static page in [`app/`](../app/README.md).
+The Android prototype lives in [`apps/android-tubecheck/`](../apps/android-tubecheck/README.md). **Verify** is a native read of the public TzKT index, using the same per-tube mapping as the [phone viewer](viewer.md). **Ship and receive** talk to a thin, Shadownet-only HTTP front over the Python [bridge](../bridge/README.md) when a service URL and bearer token are entered in Settings. Without those settings the tabs stay a labelled preview. The supported phone viewer remains the static page in [`app/`](../app/README.md).
 
-## Planned: a thin HTTP front over the bridge
+## Signing HTTP front
 
-This section is a design note for later work. There is no such service in the repository today, and the Android app does not call one.
+Staff custody should not put a private key, mnemonic or Tezos wallet in the phone. Signing stays on a machine that already holds testnet octez aliases. The service is a thin HTTP layer, not a new on-chain API and not a replacement for the contract entrypoints. `TezosBackend.submit` in the bridge still refuses injection; this front is a separate, Shadownet-only path.
 
-Staff custody should not put a private key, mnemonic or Tezos wallet in the phone. Signing stays with the institution (an HSM, a KMS, or a multisig such as TzSafe), behind the existing Python [bridge](../bridge/README.md). The planned service is a thin HTTP layer on that bridge, not a new on-chain API and not a replacement for the contract entrypoints.
+Run it from the bridge package with a config file that lives **outside the git tree**:
 
-A later version could look like this:
+```bash
+export PYTHONPATH=src
+python3 -m bioid_bridge.signing_http --config /path/to/service.json
+```
 
-- Staff sign in with the institution's ordinary account (OIDC). The app holds only a short-lived bearer token, never a chain key.
-- The service already knows the staff member's site and the wallets in `wallet_registry` they may use.
-- **Ship** maps to the contract entrypoint `ship(code, to_wallet, data)`. The destination must be a `TRANSIT` wallet. The contract has no ship `reason` parameter; it always records `shipped`. Any staff note or "registered via camera or scanner" field stays off-chain, or goes in `data` only if it is a hash and URI that follow the existing `attach_data` rules (no personal data).
-- **Receive** maps to `receive(code, to_wallet, data)`. The destination may be `STORAGE`, `INTAKE` or `QUARANTINE` (or `EXTERNAL_USER` only with an approved access request).
-- Every request carries a `client_request_id`. The bridge already treats a retry with the same id as the same request, so a tube cannot be shipped twice by accident.
-- The service re-checks the wallet rules, simulates the operation, and either injects it, or places a rule-breaking request on the existing review queue and writes nothing to the chain.
-- Inbound tubes for a site are those sitting in a transit wallet whose next receive is that site, derived from the contract and the wallet registry, not from a second invented index.
+The service binds to `127.0.0.1` by default (port 8787). It checks the RPC chain id on every signing path and refuses any network other than Shadownet (`NetXsqzbfFenSTS`). Bearer tokens and octez keys are not in this repository.
 
-Until that service exists, the Android Ship and Receive tabs stay a labelled preview, and all custody writes continue to go through the bridge CLI on a testnet with synthetic tubes.
+### Routes
+
+Staff present a bearer token. A later version can replace that with the institution's ordinary account (OIDC). The app holds only the token, never a chain key.
+
+| Method | Path | Result |
+|---|---|---|
+| `GET` | `/health` | Network, contract and chain id (no auth) |
+| `GET` | `/me` | Staff name, org, their wallets, and ship/receive destinations |
+| `GET` | `/custody/inbound` | Tubes currently in a `TRANSIT` wallet |
+| `POST` | `/custody/ship/preflight` | Simulate `ship` |
+| `POST` | `/custody/receive/preflight` | Simulate `receive` |
+| `POST` | `/custody/ship` | Sign and inject `ship(code, to_wallet, data)` |
+| `POST` | `/custody/receive` | Sign and inject `receive(code, to_wallet, data)` |
+
+Ship and receive bodies are JSON: `client_request_id`, `tube_code`, `to_wallet`, and optionally `token_id` and `registered_via` (off-chain only). A successful inject returns `200` with `{ "op_hash" }`. A rule problem returns `202` with `{ "reasons" }` and writes nothing. The same `client_request_id` with the same body returns the stored hash; the same id with a different body returns `409`.
+
+On-chain rules are unchanged. The destination of `ship` must be a `TRANSIT` wallet. The contract has no ship `reason` parameter; it always records `shipped`. `receive` destinations are `STORAGE`, `INTAKE` or `QUARANTINE` (or `EXTERNAL_USER` only with an approved access request). Inbound tubes are those sitting in a transit wallet, derived from the contract, not from a second invented index.
+
+The current Shadownet custody prototype (synthetic data) is recorded in [`pilot/deployments/shadownet-custody.json`](../pilot/deployments/shadownet-custody.json). The earlier public demo contract is unchanged.
+
+A physical phone cannot reach `127.0.0.1` on the machine that runs the service. Reachability needs a path the operator approves (SSH tunnel, VPN, or a temporary public tunnel). Do not open a public tunnel by default.
