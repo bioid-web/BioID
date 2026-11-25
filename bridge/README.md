@@ -16,6 +16,7 @@ This package does not deploy a contract, does not hold a key, and does not talk 
 | `ledger.py` | `MockLedger`, SQLite, including processed event ids and the review queue |
 | `service.py` | Batching, retries, idempotency, fallback when one event in a batch is invalid |
 | `tezos.py` | `TezosBackend` stub. Testnet configuration only. Cannot submit |
+| `signing_http.py` | Optional Shadownet-only HTTP front for phone ship/receive. Signs with octez aliases. Refuses any other network |
 | `reconcile.py` | LIMS snapshot versus ledger |
 | `fingerprint.py` | Salted file fingerprints for `attach_data` (HMAC-SHA256) |
 | `epcis.py` | GS1 EPCIS 2.0 JSON-LD export of one tube's lineage |
@@ -78,6 +79,10 @@ Default batch size is 8. If a batch fails a transition rule, the ledger rolls th
 | `TEZOS_CONTRACT_VERSION` | `v0.3` (default, the deployed contract) or `v0.4` (a testnet origination of the [proposal](../contracts/proposals/README.md); `transform` then carries `added_ul`) |
 
 A network or RPC URL that indicates mainnet is refused. Ghostnet is refused too: it is no longer a public testnet. `TEZOS_NETWORK` must be `shadownet`, and the RPC URL must be a Shadownet endpoint. A value that looks like a raw secret key (`edsk…` and the other secret prefixes) is refused. `submit` encodes the contract entrypoint and then raises `InjectionRefused`. It does not sign, broadcast, or originate. Copy [`bridge/.env.example`](.env.example) if you want the variable names locally. Do not fill it with a secret. The origination steps are in [`contracts/README.md`](../contracts/README.md).
+
+## Shadownet signing HTTP front
+
+`TezosBackend.submit` still refuses injection. For the Android prototype, `python3 -m bioid_bridge.signing_http --config /path/to/service.json` runs a separate, Shadownet-only HTTP service that signs `ship` and `receive` with testnet octez aliases. The config, bearer tokens and keys live outside this repository. The service binds to `127.0.0.1` by default, checks the Shadownet chain id on every signing path, and will not accept a mainnet or ghostnet RPC. Routes and request shapes are in [`docs/android-tubecheck.md`](../docs/android-tubecheck.md). Public addresses for the custody prototype are in [`pilot/deployments/shadownet-custody.json`](../pilot/deployments/shadownet-custody.json).
 
 ## Tests
 
