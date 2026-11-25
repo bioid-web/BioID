@@ -43,6 +43,7 @@ flowchart TB
 - [LIMS integration](lims-integration.md) — how an existing LIMS stays the system of record, and a bridge maps its events onto the chain
 - [FA2 contract](../contracts/README.md) — SmartPy multi-asset contract, and the [synthetic public demo](../pilot/README.md) a visitor can replay
 - [Phone viewer](viewer.md) — static page that scans a tube code and reads volume, custody, lineage, and datasets
+- [Android Tube Check](android-tubecheck.md) — native prototype of the same Verify lookup; ship and receive are planned, not connected
 - [Concept note](concept-note.md) — design, worked example, open questions ([PDF](pdf/concept-note.pdf))
 - [Argumentation](argumentation.md) — why an open chain-of-custody layer, with sources ([PDF](pdf/argumentation.pdf))
 - [Related work](related-work.md) — similar projects and standards, with checked links

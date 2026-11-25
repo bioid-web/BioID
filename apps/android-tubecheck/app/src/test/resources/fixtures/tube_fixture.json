@@ -1,0 +1,210 @@
+{
+  "explorer": "https://shadownet.tzkt.io",
+  "codeIndex": [
+    {"active": true, "key": "SY00000301", "value": "0"},
+    {"active": true, "key": "SY00000302", "value": "1"},
+    {"active": true, "key": "SY00000303", "value": "2"}
+  ],
+  "tokens": [
+    {
+      "active": true,
+      "key": "0",
+      "value": {
+        "code": "SY00000301",
+        "status": "active",
+        "wallet": "tz1DemoStorage000000000000000000001",
+        "balance": "1000",
+        "root_id": "0",
+        "parent_id": null,
+        "destroyed": false,
+        "created_by": "collected",
+        "sample_type": "blood",
+        "consent_ref": "synthetic-agreement"
+      }
+    },
+    {
+      "active": true,
+      "key": "1",
+      "value": {
+        "code": "SY00000302",
+        "status": "in_transit",
+        "wallet": "tz1DemoTransit000000000000000000001",
+        "balance": "500",
+        "root_id": "0",
+        "parent_id": "0",
+        "destroyed": false,
+        "created_by": "aliquoted",
+        "sample_type": "aliquot",
+        "consent_ref": "synthetic-agreement"
+      }
+    },
+    {
+      "active": true,
+      "key": "2",
+      "value": {
+        "code": "SY00000303",
+        "status": "active",
+        "wallet": "tz1DemoStorage000000000000000000001",
+        "balance": "200",
+        "root_id": "2",
+        "parent_id": null,
+        "destroyed": false,
+        "created_by": "collected",
+        "sample_type": "blood",
+        "consent_ref": "synthetic-agreement"
+      }
+    }
+  ],
+  "wallets": [
+    {
+      "active": true,
+      "key": "tz1DemoStorage000000000000000000001",
+      "value": {
+        "type": "STORAGE",
+        "label": "Freezer A (synthetic)",
+        "site": "demo-lab",
+        "process": "",
+        "active": true
+      }
+    },
+    {
+      "active": true,
+      "key": "tz1DemoTransit000000000000000000001",
+      "value": {
+        "type": "TRANSIT",
+        "label": "Courier (synthetic)",
+        "site": "demo-courier",
+        "process": "",
+        "active": true
+      }
+    }
+  ],
+  "attachments": [
+    {
+      "active": true,
+      "key": "0",
+      "value": [
+        {
+          "step": "reception",
+          "licence": "",
+          "data_uri": "ipfs://bafysyntheticdemo0001",
+          "data_type": "qc",
+          "access_level": "internal",
+          "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "tag": "MINT",
+      "timestamp": "2026-10-19T17:24:06Z",
+      "transactionId": 1001,
+      "payload": {
+        "code": "SY00000301",
+        "reason": "collected",
+        "to_": "tz1DemoStorage000000000000000000001",
+        "token_id": "0",
+        "volume": "2000"
+      }
+    },
+    {
+      "id": 2,
+      "tag": "DATA_ATTACHED",
+      "timestamp": "2026-10-19T17:24:24Z",
+      "transactionId": 1002,
+      "payload": {
+        "code": "SY00000301",
+        "token_id": "0",
+        "data_type": "qc",
+        "step": "reception",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "data_uri": "ipfs://bafysyntheticdemo0001"
+      }
+    },
+    {
+      "id": 3,
+      "tag": "TRANSFORM",
+      "timestamp": "2026-10-19T17:25:48Z",
+      "transactionId": 1003,
+      "payload": {
+        "code": "SY00000301",
+        "token_id": "0",
+        "reason": "aliquoted",
+        "burned": "1000",
+        "balance": "1000"
+      }
+    },
+    {
+      "id": 4,
+      "tag": "MINT",
+      "timestamp": "2026-10-19T17:25:48Z",
+      "transactionId": 1003,
+      "payload": {
+        "code": "SY00000302",
+        "reason": "aliquoted",
+        "to_": "tz1DemoStorage000000000000000000001",
+        "token_id": "1",
+        "volume": "500",
+        "parent": "SY00000301"
+      }
+    },
+    {
+      "id": 5,
+      "tag": "SHIP",
+      "timestamp": "2026-10-19T17:27:06Z",
+      "transactionId": 1004,
+      "payload": {
+        "code": "SY00000302",
+        "reason": "shipped",
+        "to_": "tz1DemoTransit000000000000000000001",
+        "token_id": "1",
+        "balance": "500"
+      }
+    },
+    {
+      "id": 6,
+      "tag": "WITHDRAW",
+      "timestamp": "2026-10-19T17:28:00Z",
+      "transactionId": 1005,
+      "payload": {
+        "root": "SY00000301",
+        "outcome": "destroy",
+        "previous": "active"
+      }
+    },
+    {
+      "id": 7,
+      "tag": "MINT",
+      "timestamp": "2026-10-19T17:30:00Z",
+      "transactionId": 1006,
+      "payload": {
+        "code": "SY00000303",
+        "reason": "collected",
+        "to_": "tz1DemoStorage000000000000000000001",
+        "token_id": "2",
+        "volume": "200"
+      }
+    },
+    {
+      "id": 8,
+      "tag": "WITHDRAW",
+      "timestamp": "2026-10-19T17:31:00Z",
+      "transactionId": 1007,
+      "payload": {
+        "root": "SY00000303",
+        "outcome": "stop_use"
+      }
+    }
+  ],
+  "transactions": [
+    {"id": 1001, "hash": "ooDemoMint0000000000000000000000001", "timestamp": "2026-10-19T17:24:06Z"},
+    {"id": 1002, "hash": "ooDemoAttach00000000000000000000001", "timestamp": "2026-10-19T17:24:24Z"},
+    {"id": 1003, "hash": "ooDemoTransform00000000000000000001", "timestamp": "2026-10-19T17:25:48Z"},
+    {"id": 1004, "hash": "ooDemoShip0000000000000000000000001", "timestamp": "2026-10-19T17:27:06Z"},
+    {"id": 1005, "hash": "ooDemoWithdraw000000000000000000001", "timestamp": "2026-10-19T17:28:00Z"},
+    {"id": 1006, "hash": "ooDemoMintB000000000000000000000001", "timestamp": "2026-10-19T17:30:00Z"},
+    {"id": 1007, "hash": "ooDemoStop0000000000000000000000001", "timestamp": "2026-10-19T17:31:00Z"}
+  ]
+}

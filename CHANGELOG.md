@@ -2,6 +2,15 @@
 
 All notable changes to this repository. Code is MIT, documentation CC BY 4.0.
 
+## Unreleased
+
+### Android prototype
+
+- New `apps/android-tubecheck/`: an Android (Kotlin, Jetpack Compose) prototype that scans a tube and reads it through TzKT using the same per-tube mapping as the web viewer (`code_index`, `tokens`, `wallet_registry`, contract events, effective withdrawal status).
+- Shadownet is the default network. The mainnet trial contract is an explicit opt-in and still holds only synthetic data.
+- Ship and receive tabs are labelled previews. There is no signing backend and the phone holds no key. A planned HTTP front over the existing Python bridge is described in `docs/android-tubecheck.md`.
+- JVM unit tests cover scan parsing, effective status and fixture-based timeline mapping.
+
 ## v0.4 (24 November 2026)
 
 Work from the v0.4 improvement sprint, 23–24 November 2026. Every sample, tube code and wallet in the tests and examples is synthetic. Nothing here was deployed, and nothing touched mainnet. The deployed Shadownet contract (`contracts/bioid_fa2.py`) is unchanged. Contract changes are tested proposals in `contracts/proposals/`.
