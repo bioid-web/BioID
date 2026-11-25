@@ -89,3 +89,14 @@ contracts/bioid_storage/
 contracts/bioid_originate/
 contracts/nest*/
 contracts/probe*/
+
+# Android / Gradle
+.gradle/
+local.properties
+*.iml
+captures/
+.cxx/
+*.apk
+*.aab
+*.keystore
+*.jks

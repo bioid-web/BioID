@@ -80,7 +80,7 @@ The diagram above is the architecture overview from the concept note.
 
 ## Status
 
-Shadownet testnet demo, synthetic data only. The FA2 contract is deployed as [`KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix`](https://shadownet.tzkt.io/KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix). The [phone viewer](app/README.md) reads it. Mainnet is not in use. Tube codes, volumes, wallet names and events in this repository are invented.
+Shadownet testnet demo, synthetic data only. The FA2 contract is deployed as [`KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix`](https://shadownet.tzkt.io/KT1HpDatoa5tHDctAQDY7wQgVEnrWJ9S3vix). The [phone viewer](app/README.md) reads it. An [Android prototype](apps/android-tubecheck/README.md) offers the same read-only lookup natively; ship and receive are not connected. Mainnet is not in use. Tube codes, volumes, wallet names and events in this repository are invented.
 
 ## Repository layout
 
@@ -92,6 +92,7 @@ Shadownet testnet demo, synthetic data only. The FA2 contract is deployed as [`K
 | [`pilot/`](pilot/README.md) | Synthetic public-demo feed: reception, aliquots, RNA extract, retrieval for an external user |
 | [`bridge/`](bridge/README.md) | Reference LIMS bridge. Runs offline on a mock ledger |
 | [`app/`](app/README.md) | Static phone viewer: scan or open a tube, read volume, custody, lineage, and datasets from TzKT |
+| [`apps/android-tubecheck/`](apps/android-tubecheck/README.md) | Android prototype: the same read-only Verify lookup on a phone, plus unconnected Ship/Receive previews |
 | [`examples/`](examples/README.md) | Synthetic sample data, a synthetic wallet registry, and a synthetic LIMS feed |
 
 ## Documentation
@@ -99,7 +100,7 @@ Shadownet testnet demo, synthetic data only. The FA2 contract is deployed as [`K
 - [Core operating principles](docs/principles.md)
 - [Wallet types](docs/wallet-types.md) · [registry schema](schemas/wallet-registry.schema.json) · [synthetic registry](examples/wallet-registry.example.json)
 - [LIMS integration](docs/lims-integration.md) · [reference bridge](bridge/README.md)
-- [Synthetic public demo](pilot/README.md) · [FA2 contract](contracts/README.md) · [phone viewer](app/README.md)
+- [Synthetic public demo](pilot/README.md) · [FA2 contract](contracts/README.md) · [phone viewer](app/README.md) · [Android prototype](apps/android-tubecheck/README.md)
 - [Concept note](docs/concept-note.md) · [PDF](docs/pdf/concept-note.pdf)
 - [Argumentation](docs/argumentation.md) · [PDF](docs/pdf/argumentation.pdf)
 - [Contributing](CONTRIBUTING.md)

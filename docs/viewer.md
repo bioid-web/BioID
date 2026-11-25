@@ -13,6 +13,9 @@ A single lookup reads only that tube: its row in the contract's `tokens` big map
 
 The default network is Shadownet. Mainnet is only a read-only slot in [`app/config.js`](../app/config.js), with no contract filled in.
 
+A native Android prototype in [`apps/android-tubecheck/`](../apps/android-tubecheck/README.md) uses the same per-tube TzKT mapping for Verify. Ship and receive are labelled previews only. The static page in `app/` remains the supported phone viewer.
+
+
 ## Hosting
 
 `app/` is plain files with relative links, so it can live at a host root or in a subpath.
